@@ -1,12 +1,25 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-    </body>
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="stylesheet" href="{{ asset('css/nav.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ asset('css/formulaire_page.css') }}" type="text/css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block stylesheets %}{% endblock %}
+</head>
+
+<body>
+    <div class="nav-div">
+        <ul id="nav-ul">
+            <li class="nav-li active"><a href="/">Accueil</a></li>
+            {% block nav_li %}
+            {% endblock %}
+        </ul>
+    </div>
+    {% block body %}{% endblock %}
+    {% block javascripts %}{% endblock %}
+</body>
+
 </html>

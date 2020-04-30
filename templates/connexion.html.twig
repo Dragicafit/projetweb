@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+{% block nav_li %}
+<li class="nav-li active"><a href="/inscription">Inscription</a></li>
+<li class="nav-li active"><a href="/connexion">Connexion</a></li>
+{% endblock %}
+{% block body %}
+<div class="page">
+    <!-- Inscription Field-->
+    <div class="container-form">
+        <div id="Form">
+            <form class="" action="/" method="post">
+                <h3 id="insc_title">Connexion !</h3>
+                <fieldset>
+                    <!--<label>Identifiant : </label><br>-->
+                    <input type="text" oninput="lowercase()" name="id" id="id" placeholder="Identifiant" autofocus
+                        required><br>
+                </fieldset>
+                <fieldset>
+                    <!--<label>Mot de passe : </label><br>-->
+                    <input type="password" name="mdp" id="mdp" placeholder="Mot de passe" oninput="checkmdp()"
+                        required><br>
+                </fieldset>
+                <fieldset>
+                    <label>Afficher le mot de passe</label>
+                    <input type="checkbox" name="unmask" id="unmask" onclick="afficher_mdp()">
+                    <br>
+                </fieldset>
+                <fieldset>
+                    <label>Eleve :</label>
+                    <input type="checkbox" name="eleve" id="eleve" onclick="is_check_e()">
+                    <label> Professeur :</label>
+                    <input type="checkbox" name="prof" id="prof" onclick="is_check_p()">
+                    <br>
+                </fieldset>
+                <button type="submit" name="button" id="btn-sub" class="btn-sub" disabled>Connexion</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    //Verifier si eleve ou prof check
+
+    function is_check_e() {
+        if (document.getElementById('eleve').checked) {
+            document.getElementById('prof').checked = false;
+            document.getElementById('btn-sub').disabled = false;
+        } else {
+            document.getElementById('btn-sub').disabled = true;
+        }
+    }
+
+    function is_check_p() {
+        if (document.getElementById('prof').checked) {
+            document.getElementById('eleve').checked = false;
+        } else {
+            document.getElementById('btn-sub').disabled = true;
+        }
+    }
+    //pseudo full minuscule
+    function lowercase(id) {
+        document.getElementById('id').value = document.getElementById('id').value.toLowerCase();
+    }
+    //Afficher mdp
+    function afficher_mdp() {
+        if (document.getElementById('unmask').checked) {
+            document.getElementById('mdp').type = 'text';
+        } else {
+            document.getElementById('mdp').type = 'password';
+        }
+    }
+
+    //Check mdp
+    function checkmdp() {
+        var mdp = document.getElementById("mdp");
+        if (mdp.value.length >= 8) {
+            mdp.style.border = "";
+            document.getElementById("btn-sub").disabled = false;
+        } else if (mdp.value.length > 0) {
+            mdp.style.border = "solid #bb0b0b";
+            document.getElementById("btn-sub").disabled = true;
+        } else {
+            mdp.style.border = "";
+            document.getElementById("btn-sub").disabled = true;
+        }
+    }
+
+    //Get Post
+    function get_post() {
+        $.get('/getWho', {}, (result) => {
+            //console.log(result);
+            if (result != "") {
+                document.getElementById('id').value = result;
+            }
+        });
+    }
+</script>
+{% endblock %}
