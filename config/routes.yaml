@@ -5,3 +5,7 @@ index:
 inscription:
     path: /inscription
     controller: App\Controller\inscription::start
+
+app_logout:
+    path: /logout
+    methods: GET
