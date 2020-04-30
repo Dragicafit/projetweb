@@ -1,0 +1,67 @@
+/*---- Reglages global----*/
+body{
+  margin: 0;
+  background-color: #333;
+}
+
+*{
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a, a:link{
+  text-decoration: none;
+  color: white;
+}
+
+a:hover{
+    text-decoration: none;
+    color: white;
+}
+
+ul,li{
+    list-style: none;
+}
+/*---- Nav-Bar ----*/
+
+.nav-div{
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.nav-li{
+  float: left;
+}
+
+.nav-li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.nav-li a:hover {
+  background-color: #111;
+  text-decoration: none;
+  color: white;
+}
+
+.active {
+  background-color: #4CAF50;
+}
+
+.index-3{
+  z-index: 3;
+}
+
+.f-right{
+  float: right;
+}

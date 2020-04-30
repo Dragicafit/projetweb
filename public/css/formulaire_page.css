@@ -1,0 +1,95 @@
+/*---- Reglages global----*/
+body{
+  margin: 0;
+  background-color: #333;
+}
+
+*{
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a, a:link{
+  text-decoration: none;
+  color: white;
+}
+
+a:hover{
+    text-decoration: none;
+    color: white;
+}
+
+ul,li{
+    list-style: none;
+}
+
+.page{
+    padding-bottom: 90px;
+}
+
+/*---- Formulaire ----*/
+
+.container-form {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+}
+
+#Form {
+  background: #F9F9F9;
+  padding: 25px;
+  margin: 150px 0;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
+}
+
+#Form h3 {
+  display: block;
+  font-size: 30px;
+  font-weight: 300;
+  margin-bottom: 10px;
+}
+
+fieldset {
+  border: medium none !important;
+  margin: 0 0 10px;
+  min-width: 100%;
+  padding: 0;
+  width: 100%;
+}
+
+#Form input{
+  width: 100%;
+  border: 1px solid #ccc;
+  background: #FFF;
+  margin: 0 0 15px;
+  padding: 10px;
+}
+
+#Form input[type="checkbox"]{
+    margin: 0 0 0;
+    width: auto;
+    padding: 0;
+}
+
+.btn-sub{
+  cursor: pointer;
+  width: 100%;
+  border: none;
+  background: #333;
+  color: #FFF;
+  margin: 0 0 5px;
+  padding: 10px;
+  font-size: 15px;
+  transition: background-color 1000ms;
+
+}
+
+.btn-sub:hover{
+    transition: background-color 1000ms;
+    background: #4CAF50
+}
+#insc_title{
+    text-align: center;
+}
