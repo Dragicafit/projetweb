@@ -3,22 +3,35 @@
 <li class="nav-li active"><a href="/inscription">Inscription</a></li>
 <li class="nav-li active"><a href="/connexion">Connexion</a></li>
 {% endblock %}
+{% block title %}Log in!{% endblock %}
+
 {% block body %}
 <div class="page">
     <!-- Inscription Field-->
     <div class="container-form">
         <div id="Form">
-            <form class="" action="/" method="post">
+            <form action="/" method="post">
+                {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+
+                {% if app.user %}
+                <div class="mb-3">
+                    You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+                </div>
+                {% endif %}
                 <h3 id="insc_title">Connexion !</h3>
                 <fieldset>
                     <!--<label>Identifiant : </label><br>-->
-                    <input type="text" oninput="lowercase()" name="id" id="id" placeholder="Identifiant" autofocus
+                    <input type="text" oninput="lowercase()" name="id" id="id" placeholder="E-Mail" autofocus
                         required><br>
                 </fieldset>
                 <fieldset>
                     <!--<label>Mot de passe : </label><br>-->
-                    <input type="password" name="mdp" id="mdp" placeholder="Mot de passe" oninput="checkmdp()"
+                    <input type=" password" name="mdp" id="mdp" placeholder="Mot de passe" oninput="checkmdp()"
                         required><br>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
                 </fieldset>
                 <fieldset>
                     <label>Afficher le mot de passe</label>
@@ -32,6 +45,16 @@
                     <input type="checkbox" name="prof" id="prof" onclick="is_check_p()">
                     <br>
                 </fieldset>
+                {#
+                        Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+                        See https://symfony.com/doc/current/security/remember_me.html
+                
+                        <div class="checkbox mb-3">
+                            <label>
+                                <input type="checkbox" name="_remember_me"> Remember me
+                            </label>
+                        </div>
+                    #}
                 <button type="submit" name="button" id="btn-sub" class="btn-sub" disabled>Connexion</button>
             </form>
         </div>

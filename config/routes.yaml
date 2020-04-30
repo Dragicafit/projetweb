@@ -5,7 +5,3 @@ index:
 inscription:
     path: /inscription
     controller: App\Controller\inscription::start
-
-connexion:
-    path: /connexion
-    controller: App\Controller\inscription::connect

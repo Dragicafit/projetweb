@@ -15,12 +15,4 @@ class inscription extends AbstractController
     {
         return $this->render("Inscription/Form.html.twig");
     }
-
-    /*
-    * @Route("/connexion")
-    */
-    public function connect()
-    {
-        return $this->render("connexion.html.twig");
-    }
 }
