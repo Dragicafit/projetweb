@@ -11,47 +11,87 @@ class Cours
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=255)
      */
-    private $cour_id;
+    private $title;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private $auteur;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $temps;
+
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $value = [];
+
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getCourId(): ?int
+    public function getTitle(): ?string
     {
-        return $this->cour_id;
+        return $this->title;
     }
 
-    public function setCourId(int $cour_id): self
+    public function setTitle(string $title): self
     {
-        $this->cour_id = $cour_id;
+        $this->title = $title;
 
         return $this;
     }
 
-    public function getName(): ?string
+    public function getAuteur(): ?string
     {
-        return $this->name;
+        return $this->auteur;
     }
 
-    public function setName(string $name): self
+    public function setAuteur(string $auteur): self
     {
-        $this->name = $name;
+        $this->auteur = $auteur;
 
         return $this;
+    }
+
+    public function getTemps(): ?int
+    {
+        return $this->temps;
+    }
+
+    public function setTemps(?int $temps): self
+    {
+        $this->temps = $temps;
+
+        return $this;
+    }
+
+    public function getValue(): ?array
+    {
+        return $this->value;
+    }
+
+    public function setValue(array $value): self
+    {
+        $this->value = $value;
+
+        return $this;
+    }
+
+    public function getSizeOfValue(): ?int
+    {
+        return $this->sizValue=sizeof(value);
     }
 }

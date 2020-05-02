@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block nav_li%}
+{% if connect == false %}
+<li class="nav-item">
+    <a class="nav-link" href="#">Inscription</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="#">Connexion</a>
+</li>
+{% else %}
+<li class="nav-item">
+    <a class="nav-link" href="#">Cours</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="#">Déconnexion</a>
+</li>
+{% endif %}
+{% endblock %}
+{% block body %}
+<h1 style="text-align: center; padding: 5% 0% 5% 0%">Bienvenue sur ExoEnLigne !</h1>
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Titre</th>
+            <th scope="col">Temps</th>
+            <th scope="col">Créateur</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cour in liste_cours %}
+        <tr>
+            <td>{{ cour.title }}</td>
+            <td>{{ cour.temps }} minutes</td>
+            <td>{{ cour.auteur }}</td>
+            <td><a style="float: right;" type="button" href="{{ path('cour_view', {'id':cour.id}) }}"> Essayer</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
