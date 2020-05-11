@@ -1,30 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block nav_li%}
-{% if not app.user %}
-<li class="nav-item">
-    <a class="nav-link" href="{{ path('security_inscription') }}">Inscription</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href="{{ path('security_login') }}">Connexion</a>
-</li>
-{% else %}
-{% if prof ==true %}
-<li class="nav-item">
-    <a class="nav-link" href="#">Mes Cours</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href="{{ path('createCour') }}">Créer un cour</a>
-</li>
-{% else %}
-<li class="nav-item">
-    <a class="nav-link" href="{{ path('home') }}">Cours</a>
-</li>
-{% endif %}
-<li class="nav-item">
-    <a class="nav-link" href="{{ path('security_logout') }}">Déconnexion</a>
-</li>
-{% endif %}
+
 {% endblock %}
 {% block body %}
 <h1 style="text-align: center; padding: 5% 0% 5% 0%">Bienvenue sur ExoEnLigne !</h1>
@@ -35,7 +12,12 @@
             <th scope="col">Titre</th>
             <th scope="col">Temps</th>
             <th scope="col">Créateur</th>
+
+            {% if app.user.prof %}
+            <th scope="col">Réussite</th>
+            {% else %}
             <th scope="col"></th>
+            {% endif %}
         </tr>
     </thead>
     <tbody>
@@ -44,7 +26,25 @@
             <td>{{ cour.title }}</td>
             <td>{{ cour.temps }} minutes</td>
             <td>{{ cour.auteur }}</td>
+            {% if app.user.prof%}
+            {% if app.user.username == cour.auteur %}
+            <td>95%</td>
+            {% else %}
+            <td></td>
+            {% endif %}
+            {% else %}
+            {% set bool = 0 %}
+                 {% for c in app.user.getDone() %}
+                    {% if c.id == cour.id %}
+                    {% set bool = 1 %}
+                    {% endif %}
+                 {% endfor %}
+                 {% if bool == 1%}
+                 <td>Terminé.</td>
+                 {% else %}
             <td><a style="float: right;" type="button" href="{{ path('cour_view', {'id':cour.id}) }}"> Essayer</a></td>
+            {% endif %}
+            {% endif %}
         </tr>
         {% endfor %}
     </tbody>
@@ -55,7 +55,7 @@
     </p>
     <p>(Vous êtes enseignant ou formateur ? Pensez à cocher la case "enseignant" !)
     </p>
-    <a href="{{ path('security_login') }}"><button class="btn btn-success"> S'inscrire !</button></a>
+    <a href="{{ path('security_login') }}"><button class="btn btn-success"> Se conencter !</button></a>
 </div>
 
 {% endif %}

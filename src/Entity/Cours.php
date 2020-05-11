@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -19,11 +21,6 @@ class Cours
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $title;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     private $auteur;
 
     /**
@@ -32,26 +29,32 @@ class Cours
     private $temps;
 
     /**
-     * @ORM\Column(type="array")
+     * @ORM\Column(type="string", length=255)
      */
-    private $value = [];
+    private $title;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Exercice", mappedBy="cour", orphanRemoval=true)
+     */
+    private $exercices;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="Done")
+     */
+    private $users;
+
+
+    public function __construct()
+    {
+        $this->exercices = new ArrayCollection();
+        $this->eleves = new ArrayCollection();
+        $this->users = new ArrayCollection();
+    }
 
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    public function setTitle(string $title): self
-    {
-        $this->title = $title;
-
-        return $this;
     }
 
     public function getAuteur(): ?string
@@ -77,21 +80,75 @@ class Cours
 
         return $this;
     }
-
-    public function getValue(): ?array
+    
+    public function getTitle(): ?string
     {
-        return $this->value;
+        return $this->title;
     }
 
-    public function setValue(array $value): self
+    public function setTitle(string $title): self
     {
-        $this->value = $value;
+        $this->title = $title;
 
         return $this;
     }
 
-    public function getSizeOfValue(): ?int
+    /**
+     * @return Collection|Exercice[]
+     */
+    public function getExercices(): Collection
     {
-        return $this->sizValue=sizeof(value);
+        return $this->exercices;
+    }
+
+    public function addExercice(Exercice $exercice): self
+    {
+        if (!$this->exercices->contains($exercice)) {
+            $this->exercices[] = $exercice;
+            $exercice->setCour($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExercice(Exercice $exercice): self
+    {
+        if ($this->exercices->contains($exercice)) {
+            $this->exercices->removeElement($exercice);
+            // set the owning side to null (unless already changed)
+            if ($exercice->getCour() === $this) {
+                $exercice->setCour(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->addDone($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+            $user->removeDone($this);
+        }
+
+        return $this;
     }
 }

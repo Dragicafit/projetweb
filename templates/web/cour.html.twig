@@ -1,12 +1,9 @@
 {% extends 'base.html.twig' %}
-{% block nav_li %}
-<li class="nav-item">
-    <a class="nav-link" href="#">Profil</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href="{{ path('security_logout') }}">Déconnexion</a>
-</li>
+
+{% block stylesheets %}
 {% endblock %}
+
+
 {% block body %}
 <style>
     .div {
@@ -16,59 +13,122 @@
         background-color: white;
         border: 2px black solid;
     }
+
+    .back_grey {
+        background-color: lightgrey;
+        padding-bottom: 2.5%;
+    }
 </style>
-<div>
+<div class="back_grey">
     <h1 style="text-align: center; padding-top: 4%;">
         Bienvenue sur le cour :
         {{ cour.title }}
     </h1>
     <h4 style="text-align: center;"> Auteur: {{ cour.auteur }} </h4>
 </div>
-<div class="container-fluid" style="padding-top: 5%;">
-    <div class="row">
-        <div class="col-2"></div>
-        <div class="col-4" style="background-color: lightgrey; padding:5%; border: solid 2px black;">
-            {% set i = 0 %}
-            {% for val in val %}
-            <div class="div" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <div id="drag{{i}}" draggable="true" ondragstart="drag(event)">{{val}}</div>
+<div class="container">
+    <form action="/cours/{{c_id}}/exo/{{e_id +1}}">
+        <div class="row" style="margin: 10px;">
+
+            <div class="col-6" id="col-exo">
+                <div>
+                    <h3>Exercice {{e_id+1}} :</h3>
+                </div>
+                <div style="border: solid 1px gray; padding: 20px;" id="foo">
+                </div>
             </div>
-            <br>
-            {% set i = i+1 %}
-            {% endfor %}
-        </div>
-        <div class="col-4" style="background-color: lightgrey; padding:5%; border: solid 2px black;">
-            {% set i = 0 %}
-            {% for v in cour.value %}
-            <div class="div" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <br>
-            {% set i = i+1 %}
-            {% endfor %}
-
-        </div>
-        <div class="col-2">
-            <div>
-
+            <div class=" col-6" id="res_hidden" hidden>
+                <div>
+                    <h3>Attendu {{e_id+1}} :</h3>
+                </div>
+                <div style="border: solid 1px gray; padding: 20px;" id="foo_hidden">
+                </div>
             </div>
         </div>
-    </div>
+        <p style="text-align: center;"><button type="button" onclick="send_value()"
+                style="text-align: center;">Verifier</button></p>
+        <input type="text" name="c_id" value="{{ c_id }}" hidden>
+        <input type="text" name="exo_id" value="{{ e_id }}" hidden>
+        <button type="submit" id="btn_sub" hidden>Suivant</button>
+    </form>
 </div>
-
+{# {% endfor %}
+ #}
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
-    function allowDrop(ev) {
-        ev.preventDefault();
+    //Test
+    var result = [];
+    {% for r in res %}
+    result.push("{{ r }}");
+    {% endfor %}
+    var options = [];
+    {% for ex in exo %}
+    options.push("{{ ex }}");
+    {% endfor %}
+    console.log(options);
+    console.log(result);
+
+    function makeUL(options, val) {
+        var form = document.createElement('form');
+        form.setAttribute('id', 'form');
+        // Create the list element:
+        var list = document.createElement('ul');
+        list.setAttribute('id', 'sortable');
+        list.setAttribute('class', val);
+        for (var i = 0; i < options.length; i++) {
+            // Create the list item:
+            var item = document.createElement('li');
+            item.setAttribute('style', 'border: solid 1px lightslategrey; padding: 5px; background-color: lightgrey;');
+            // Set its contents:
+            item.appendChild(document.createTextNode(options[i]));
+            // Add it to the list:
+            list.appendChild(item);
+        }
+        form.appendChild(list);
+        return form;
+    }
+    document.getElementById('foo').appendChild(makeUL(options, 'exo'));
+    document.getElementById('foo_hidden').appendChild(makeUL(result, 'exo_hidden'));
+
+    function rebuild_option() {
+        var array = [];
+        var list = document.querySelectorAll('.exo li');
+        for (var i = 0; i < list.length; i++) {
+            array.push(list[i].textContent);
+        }
+        return array;
     }
 
-    function drag(ev) {
-        ev.dataTransfer.setData("text", ev.target.id);
+    function is_same(arr, array) {
+        if (arr.length == array.length) {
+            for (var i = 0; i < options.length; i++) {
+                if (arr[i] != array[i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
-    function drop(ev) {
-        ev.preventDefault();
-        var data = ev.dataTransfer.getData("text");
-        ev.target.appendChild(document.getElementById(data));
+    function send_value() {
+        var val = rebuild_option();
+        if (is_same(val, result)) {
+            document.getElementById('res_hidden').hidden = false;
+            document.getElementById('btn_sub').hidden = false;
+        } else {
+
+            document.getElementById('res_hidden').hidden = true;
+            document.getElementById('btn_sub').hidden = true;
+            alert('Encore un effort, c\'est presque bon !');
+        }
     }
+
+    //End test
+    $(function () {
+        $("#sortable").sortable();
+        $("#sortable").disableSelection();
+    });
 </script>
-
-
 {% endblock %}

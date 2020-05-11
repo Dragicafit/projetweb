@@ -2,32 +2,23 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Request;
+use App\Entity\Cours;
+use App\Entity\Exercice;
+use Doctrine\ORM\EntityManagerInterface;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType ;
-
-
-use App\Entity\Cours;
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class WebController extends AbstractController
 {
-    /**
-     * @Route("/web", name="web")
-     */
-    public function index()
-    {
-        return $this->render('web/index.html.twig', [
-            'controller_name' => 'WebController',
-        ]);
-    }
-
-      
-
     /**
      * @Route("/", name="home")
      */
@@ -37,30 +28,18 @@ class WebController extends AbstractController
         
         $cours = $repo->findAll();
 
-        return $this->render('web/home.html.twig', ['connect' => false,'prof'=>false, 'liste_cours'=>$cours]);
+        return $this->render('web/home.html.twig', ['liste_cours'=>$cours]);
     }
 
     /**
      * @Route("/cour/create", name="createCour")
      */
-    public function create_cour(Request $request, EntityManagerInterface $manager)
+    public function create_cour(Request $request, EntityManagerInterface $manager, UserInterface $user)
     {
         $cour = new Cours();
+        $exo = new Exercice();
 
         $form = $this->createFormBuilder($cour)
-                    ->add('title', TextType::class, [
-                            'attr'=>[
-                                'placeholder'=>'Titre',
-                                'class' => 'form-control'
-
-                                ]
-                            ])
-                    ->add('temps', NumberType::class, [
-                            'attr'=>[
-                                'placeholder'=>'Temps',
-                                'class' => 'form-control'
-                                ]
-                            ])
                     ->add(
                         'save',
                         SubmitType::class,
@@ -69,19 +48,32 @@ class WebController extends AbstractController
                         ]
                     ]
                     )
+                    ->add('next', SubmitType::class, ['label'=>'Ajouter un exercice', 'attr'=>['class'=>'btn btn-primary pull-right']])
                     ->getForm();
-        // $form->handleRequest($request);
+        $form->handleRequest($request);
 
-        if ($request->request->count()>0) {
-            $cour = new Cours();
+        if ($form->isSubmitted() && $form->isValid()) {
             $value = explode("\n", str_replace("\r", "", $request->request->get('value')));
-            $cour -> setAuteur('Jean-Bob')
-                  ->setTitle($request->request->get('title'))
-                  ->setTemps($request->request->get('temps'))
-                  ->setValue($value);
+            
+            $cour->setTitle($request->request->get('titre'))
+                ->setAuteur($user->getUsername())
+                ->setTemps($request->request->get('temps'));
+            
             $manager->persist($cour);
             $manager->flush();
 
+            $exo->setExo($value);
+            $manager->persist($exo);
+            $cour->addExercice($exo);
+            $manager->persist($exo);
+            $manager->flush();
+
+            if ($form->get('save')->isClicked()) {
+                return $this->redirectToRoute('home');
+            } else {
+                return $this->redirectToRoute('add_exo', ['id' => $cour->getId()]);
+                //return $this->render('web/newExercice.html.twig', ['userid'=>$cour->getId()]);
+            }
             return $this->redirectToRoute('home');
         }
         return $this->render('web/createCour.html.twig', ['formCour'=>$form->createView()]);
@@ -93,10 +85,87 @@ class WebController extends AbstractController
     public function show($id)
     {
         $repo = $this->getDoctrine()->getRepository(Cours::class);
+        $cour = $repo->find($id);
+        $exo = $cour->getExercices();
+        $i=0;
+        $val = $exo[1]->getExo();
+        $res = $val;
+        shuffle($val);
+        return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$val, 'res'=>$res, 'c_id'=> $id, 'e_id'=> 0]);
+    }
+
+    /**
+     * @Route("cours/{id}/exo/{exo_id}", name="cour_exo")
+     */
+    public function show_next($id, $exo_id, UserInterface $user, EntityManagerInterface $manager)
+    {
+        $repo = $this->getDoctrine()->getRepository(Cours::class);
 
         $cour = $repo->find($id);
-        $val = $cour->getValue();
+        $exo = $cour->getExercices();
+        if ($exo_id >= sizeof($exo)) {
+            $user->addDone($cour);
+            $manager->persist($cour);
+            $manager->flush();
+            return $this->render('web/finexo.html.twig');
+        }
+        $val = $exo[$exo_id]->getExo();
+        $res = $exo[$exo_id]->getExo();
         shuffle($val);
-        return $this->render('web/cour.html.twig', ['cour'=>$cour, 'val'=>$val]);
+        return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$val, 'res'=>$res, 'c_id'=> $id, 'e_id'=> $exo_id]);
+    }
+
+    /**
+     * @Route("/mescours", name="mes_cours")
+     */
+    public function my_cours(UserInterface $user)
+    {
+        $repo = $this->getDoctrine()->getRepository(Cours::class);
+
+        $cour = $repo->findBy(array('auteur' => $user->getUsername()));
+        return $this->render('web/home.html.twig', ['liste_cours'=>$cour]);
+    }
+
+    /**
+     * @Route("/newExo/{id}", name="add_exo")
+     */
+    public function add_exo(Request $request, EntityManagerInterface $manager, $id)
+    {
+        $exercice = new Exercice();
+
+        $form = $this->createFormBuilder($exercice)
+                    ->add('valId', HiddenType::class, [
+                        'mapped'=>false                        ])
+                    ->add(
+                        'save',
+                        SubmitType::class,
+                        ['label'=>'Enregistrer', 'attr'=>[
+                            'class'=>'btn btn-primary'
+                        ]
+                    ]
+                    )
+                    ->add('next', SubmitType::class, ['label'=>'Ajouter un exercice', 'attr'=>['class'=>'btn btn-primary pull-right']])
+                    ->getForm();
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $repo = $this->getDoctrine()->getRepository(Cours::class);
+
+            $value = explode("\n", str_replace("\r", "", $request->request->get('value')));
+            
+            $exercice->setExo($value);
+            $manager->persist($exercice);
+
+            $cour = $repo->find($id);
+            $cour->addExercice($exercice);
+            $manager->persist($cour);
+            $manager->flush();
+            if ($form->get('save')->isClicked()) {
+                return $this->redirectToRoute('home');
+            } else {
+                return $this->redirectToRoute('add_exo', ['id' => $cour->getId()]);
+                //return $this->render('web/newExercice.html.twig', ['userid'=>$cour->getId()]);
+            }
+        }
+        return $this->render('web/newExercice.html.twig', ['formExo'=>$form->createView()]);
     }
 }

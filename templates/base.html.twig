@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <title>{% block title %}Welcome!{% endblock %}</title>
     <link rel="stylesheet" href="https://bootswatch.com/4/sandstone/bootstrap.min.css">
-
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     {% block stylesheets %}{% endblock %}
 </head>
 
@@ -22,6 +24,30 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="{{ path('home') }}">Home <span class="sr-only">(current)</span></a>
                 </li>
+                {% if not app.user %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('security_inscription') }}">Inscription</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('security_login') }}">Connexion</a>
+                </li>
+                {% else %}
+                {% if app.user.prof %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('mes_cours') }}">Mes Cours</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('createCour') }}">Créer un cour</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('home') }}">Cours</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('security_logout') }}">Déconnexion</a>
+                </li>
+                {% endif %}
                 {% block nav_li%}
                 {% endblock %}
             </ul>

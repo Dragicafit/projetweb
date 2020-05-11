@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -52,6 +54,21 @@ class User implements UserInterface
      * @Assert\EqualTo(propertyPath="password", message="Les mots de passes doivent être identiques")
      */
     public $confirm_password;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $prof;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Cours", inversedBy="users")
+     */
+    private $Done;
+
+    public function __construct()
+    {
+        $this->Done = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -129,5 +146,43 @@ class User implements UserInterface
     public function getRoles()
     {
         return['ROLE_USER'];
+    }
+
+    public function getProf(): ?bool
+    {
+        return $this->prof;
+    }
+
+    public function setProf(bool $prof): self
+    {
+        $this->prof = $prof;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Cours[]
+     */
+    public function getDone(): Collection
+    {
+        return $this->Done;
+    }
+
+    public function addDone(Cours $done): self
+    {
+        if (!$this->Done->contains($done)) {
+            $this->Done[] = $done;
+        }
+
+        return $this;
+    }
+
+    public function removeDone(Cours $done): self
+    {
+        if ($this->Done->contains($done)) {
+            $this->Done->removeElement($done);
+        }
+
+        return $this;
     }
 }

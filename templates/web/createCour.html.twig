@@ -1,34 +1,27 @@
 {% extends 'base.html.twig' %}
 
-{% block nav_li %}
-<li class="nav-item">
-    <a class="nav-link" href="{{ path('home') }}">Cours</a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href="{{ path('security_logout') }}">Déconnexion</a>
-</li>
-{% endblock %}
-
 {% block body %}
 <div class="container">
     {{ form_start(formCour) }}
     <div class="container">
         <h1>Créons un cours ! </h1>
         <fieldset>
-            {{ form_widget(formCour.title) }}
+            <input type="text" name="titre" id="" class="form-control" placeholder="Titre..." required>
         </fieldset>
         <br>
         <fieldset>
-            {{ form_widget(formCour.temps) }}
+            <input type="number" name="temps" min="1" max="60" required> minutes.
+        </fieldset>
+        <br>
+        <fieldset>
+            <h4>Créer un exercice :</h4>
+            <textarea class="form-control " rows="5" cols="33" name="value" id="" placeholder="Taper votre code"
+                required></textarea>
+        </fieldset>
+        <br>
+        <fieldset>
+            {{ form_widget(formCour.next) }}
 
-        </fieldset>
-        <br>
-        <fieldset>
-            <textarea class="form-control " rows="5" cols="33" name="value" id=""
-                placeholder="Taper votre code"></textarea>
-        </fieldset>
-        <br>
-        <fieldset>
             {{ form_widget(formCour.save) }}
         </fieldset>
     </div>
