@@ -85,14 +85,7 @@ class WebController extends AbstractController
      */
     public function show($id)
     {
-        $repo = $this->getDoctrine()->getRepository(Cours::class);
-        $cour = $repo->find($id);
-        $exo = $cour->getExercices();
-        $i=0;
-        $val = $exo[0]->getExo();
-        $res = $val;
-        shuffle($val);
-        return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$val, 'res'=>$res, 'c_id'=> $id, 'e_id'=> 0]);
+        return $this->redirectToRoute('cour_exo', ['id' => $id, 'exo_id' => 0]);
     }
 
     /**
