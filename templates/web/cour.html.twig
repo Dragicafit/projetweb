@@ -6,6 +6,59 @@
 
 {% block body %}
 <style>
+    <style>.facet-container {
+        width: 330px;
+    }
+
+    .right {
+        float: right;
+    }
+
+    .left {
+        float: left;
+    }
+
+    p {
+        clear: both;
+        padding-top: 1em;
+    }
+
+    .facet-list {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        margin-right: 10px;
+        background: #eee;
+        padding: 5px;
+        min-height: 1.5em;
+        font-size: 0.85em;
+    }
+
+    .facet-list li {
+        margin: 5px;
+        padding: 5px;
+        font-size: 1.2em;
+    }
+
+    .facet-list li.placeholder {
+        height: 1.2em
+    }
+
+    .facet {
+        border: 1px solid #bbb;
+        background-color: #fafafa;
+        cursor: move;
+    }
+
+    .facet.ui-sortable-helper {
+        opacity: 0.5;
+    }
+
+    .placeholder {
+        border: 1px solid orange;
+        background-color: #fffffd;
+    }
+
     .div {
         width: 350px;
         height: 70px;
@@ -37,18 +90,19 @@
             </div>
             <div class="col-6">
                 <div>
-                    <h3 id="att_hidden" hidden>Attendu :</h3>
+                    <h3 id="att_hidden">Remplir ici :</h3>
                 </div>
             </div>
         </div>
         <div class="row" style="margin: 10px;">
             <div class="col-6" id="col-exo">
-
                 <div style="border: solid 1px gray; padding: 20px;" id="foo">
                 </div>
             </div>
-            <div class="col-6" id="res_hidden" hidden>
-                <div style="border: solid 1px gray; padding: 20px;" id="foo_hidden">
+            <div class="col-6" id="res_hidden">
+                <div style="border: solid 1px gray; padding: 20px;" id="foo">
+                    <ul id="userFacets" class="facet-list">
+                    </ul>
                 </div>
             </div>
         </div>
@@ -80,12 +134,12 @@
         form.setAttribute('id', 'form');
         // Create the list element:
         var list = document.createElement('ul');
-        list.setAttribute('id', 'sortable');
-        list.setAttribute('class', val);
+        list.setAttribute('id', 'allFacets');
+        list.setAttribute('class', 'facet-list');
         for (var i = 0; i < options.length; i++) {
             // Create the list item:
             var item = document.createElement('li');
-            item.setAttribute('style', 'border: solid 1px lightslategrey; padding: 5px; background-color: lightgrey;');
+            item.setAttribute('class', 'facet');
             // Set its contents:
             item.appendChild(document.createTextNode(options[i]));
             // Add it to the list:
@@ -94,12 +148,12 @@
         form.appendChild(list);
         return form;
     }
+
     document.getElementById('foo').appendChild(makeUL(options, 'exo'));
-    document.getElementById('foo_hidden').appendChild(makeUL(result, 'exo_hidden'));
 
     function rebuild_option() {
         var array = [];
-        var list = document.querySelectorAll('.exo li');
+        var list = $("#userFacets");
         for (var i = 0; i < list.length; i++) {
             array.push(list[i].textContent);
         }
@@ -121,22 +175,19 @@
     function send_value() {
         var val = rebuild_option();
         if (is_same(val, result)) {
-            document.getElementById('res_hidden').hidden = false;
-            document.getElementById('att_hidden').hidden = false;
             document.getElementById('btn_sub').hidden = false;
         } else {
-
-            document.getElementById('res_hidden').hidden = true;
-            document.getElementById('att_hidden').hidden = true;
             document.getElementById('btn_sub').hidden = true;
             alert('Encore un effort, c\'est presque bon !');
         }
     }
 
-    //End test
     $(function () {
-        $("#sortable").sortable();
-        $("#sortable").disableSelection();
+        $("#allFacets, #userFacets").sortable({
+            connectWith: "ul",
+            delay: 150
+        }).disableSelection();
     });
+
 </script>
 {% endblock %}
