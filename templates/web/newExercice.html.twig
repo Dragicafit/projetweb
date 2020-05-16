@@ -4,7 +4,13 @@
 <div class="container">
     <h1>Encore un exercice ?</h1>
     <br>
+    <p>
+    <h4>Consinge :</h4>{{ cons }}</p>
     {{ form_start(formExo) }}
+    <fieldset>
+        <textarea class="form-control" name="consigne" cols="33" rows="5" placeholder="Taper votre consigne"
+            required></textarea>
+    </fieldset>
     <fieldset>
         <textarea name="value" cols="33" rows="5" class="form-control" required
             placeholder="Entrez votre code..."></textarea>

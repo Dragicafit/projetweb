@@ -19,6 +19,7 @@ class CoursFixtures extends Fixture
             for ($j = 1; $j<=5; $j++) {
                 $exo = new Exercice();
                 $exo->setExo(["int i = 1;", "While(i < 10){" , "print(\"Salut c'est la \".val.\"eme fois que tu me vois !\");","i++;","} "]);
+                $exo->setConsigne("Test des consignes");
                 $manager->persist($exo);
                 $cour->addExercice($exo);
             }

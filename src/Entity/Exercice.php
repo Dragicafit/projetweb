@@ -27,6 +27,11 @@ class Exercice
      */
     private $cour;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $consigne;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +57,18 @@ class Exercice
     public function setCour(?Cours $cour): self
     {
         $this->cour = $cour;
+
+        return $this;
+    }
+
+    public function getConsigne(): ?string
+    {
+        return $this->consigne;
+    }
+
+    public function setConsigne(string $consigne): self
+    {
+        $this->consigne = $consigne;
 
         return $this;
     }

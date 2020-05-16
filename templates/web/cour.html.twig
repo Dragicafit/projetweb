@@ -29,31 +29,37 @@
 <div class="container">
     <form action="/cours/{{c_id}}/exo/{{e_id +1}}">
         <div class="row" style="margin: 10px;">
-
-            <div class="col-6" id="col-exo">
+            <div class="col-6">
                 <div>
                     <h3>Exercice {{e_id+1}} :</h3>
+                    <h4>{{cons}} </h4>
                 </div>
+            </div>
+            <div class="col-6">
+                <div>
+                    <h3 id="att_hidden" hidden>Attendu :</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin: 10px;">
+            <div class="col-6" id="col-exo">
+
                 <div style="border: solid 1px gray; padding: 20px;" id="foo">
                 </div>
             </div>
-            <div class=" col-6" id="res_hidden" hidden>
-                <div>
-                    <h3>Attendu {{e_id+1}} :</h3>
-                </div>
+            <div class="col-6" id="res_hidden" hidden>
                 <div style="border: solid 1px gray; padding: 20px;" id="foo_hidden">
                 </div>
             </div>
         </div>
         <p style="text-align: center;"><button type="button" onclick="send_value()"
-                style="text-align: center;">Verifier</button></p>
+                style="text-align: center;">Verifier</button>
+            <button type="submit" id="btn_sub" hidden>Suivant</button></p>
         <input type="text" name="c_id" value="{{ c_id }}" hidden>
         <input type="text" name="exo_id" value="{{ e_id }}" hidden>
-        <button type="submit" id="btn_sub" hidden>Suivant</button>
     </form>
 </div>
-{# {% endfor %}
- #}
+{# {% endfor %} #}
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
@@ -116,10 +122,12 @@
         var val = rebuild_option();
         if (is_same(val, result)) {
             document.getElementById('res_hidden').hidden = false;
+            document.getElementById('att_hidden').hidden = false;
             document.getElementById('btn_sub').hidden = false;
         } else {
 
             document.getElementById('res_hidden').hidden = true;
+            document.getElementById('att_hidden').hidden = true;
             document.getElementById('btn_sub').hidden = true;
             alert('Encore un effort, c\'est presque bon !');
         }

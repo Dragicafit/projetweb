@@ -62,7 +62,8 @@ class WebController extends AbstractController
             $manager->persist($cour);
             $manager->flush();
 
-            $exo->setExo($value);
+            $exo->setExo($value)
+                ->setConsigne($request->request->get('consigne'));
             $manager->persist($exo);
             $cour->addExercice($exo);
             $manager->persist($exo);
@@ -87,11 +88,11 @@ class WebController extends AbstractController
         $repo = $this->getDoctrine()->getRepository(Cours::class);
         $cour = $repo->find($id);
         $exo = $cour->getExercices();
-        $i=0;
-        $val = $exo[1]->getExo();
+        $val = $exo[0]->getExo();
         $res = $val;
+        $cons = $exo[0]->getConsigne();
         shuffle($val);
-        return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$val, 'res'=>$res, 'c_id'=> $id, 'e_id'=> 0]);
+        return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$val, 'res'=>$res, 'c_id'=> $id, 'e_id'=> 0, 'cons'=>$cons]);
     }
 
     /**
@@ -111,8 +112,9 @@ class WebController extends AbstractController
         }
         $val = $exo[$exo_id]->getExo();
         $res = $exo[$exo_id]->getExo();
+        $cons = $exo[$exo_id]->getConsigne();
         shuffle($val);
-        return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$val, 'res'=>$res, 'c_id'=> $id, 'e_id'=> $exo_id]);
+        return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$val, 'res'=>$res, 'c_id'=> $id, 'e_id'=> $exo_id, 'cons'=>$cons]);
     }
 
     /**
@@ -153,8 +155,9 @@ class WebController extends AbstractController
             $value = explode("\n", str_replace("\r", "", $request->request->get('value')));
             
             $exercice->setExo($value);
-            $manager->persist($exercice);
+            $exercice->setConsigne($request->request->get('consigne'));
 
+            $manager->persist($exercice);
             $cour = $repo->find($id);
             $cour->addExercice($exercice);
             $manager->persist($cour);
