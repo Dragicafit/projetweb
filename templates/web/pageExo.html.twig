@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block nav_li%}
+{% endblock %}
+
+{% block body %}
+<table class="table">
+    <tr>
+        <th scope="col">N°</th>
+        <th scope="col">Consigne</th>
+        <th scope="col">Exercices</th>
+        <th scope="col">Réussite</th>
+    </tr>
+    {% set i = 1 %}
+    {% for ex in exo %}
+    <tr>
+        <th>{{ i++ }}</th>
+        <th>{{ ex.getExo() }}</th>
+        <th>{{ ex.consigne }}</th>
+        <th></th>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
