@@ -53,8 +53,9 @@ class WebController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $value = explode("\n", str_replace("\r", "", $request->request->get('value')));
-            
+            $values = $request->request->get('value');
+            $values = $this->parse($values);
+
             $cour->setTitle($request->request->get('titre'))
                 ->setAuteur($user->getUsername())
                 ->setTemps($request->request->get('temps'));
@@ -62,7 +63,7 @@ class WebController extends AbstractController
             $manager->persist($cour);
             $manager->flush();
 
-            $exo->setExo($value)
+            $exo->setExo($values)
                 ->setConsigne($request->request->get('consigne'));
             $manager->persist($exo);
             $cour->addExercice($exo);
@@ -85,14 +86,7 @@ class WebController extends AbstractController
      */
     public function show($id)
     {
-        $repo = $this->getDoctrine()->getRepository(Cours::class);
-        $cour = $repo->find($id);
-        $exo = $cour->getExercices();
-        $val = $exo[0]->getExo();
-        $res = $val;
-        $cons = $exo[0]->getConsigne();
-        shuffle($val);
-        return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$val, 'res'=>$res, 'c_id'=> $id, 'e_id'=> 0, 'cons'=>$cons]);
+        return $this->redirectToRoute('cour_exo', ['id' => $id, 'exo_id' => 0]);
     }
 
     /**
@@ -152,9 +146,10 @@ class WebController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $repo = $this->getDoctrine()->getRepository(Cours::class);
 
-            $value = explode("\n", str_replace("\r", "", $request->request->get('value')));
+            $values = $request->request->get('value');
+            $values = $this->parse($values);
             
-            $exercice->setExo($value);
+            $exercice->setExo($values);
             $exercice->setConsigne($request->request->get('consigne'));
 
             $manager->persist($exercice);
@@ -170,5 +165,28 @@ class WebController extends AbstractController
             }
         }
         return $this->render('web/newExercice.html.twig', ['formExo'=>$form->createView()]);
+    }
+
+    private function parse($values)
+    {
+        $values = str_replace("\r", "", $values);
+
+        $values = str_replace("\t", "    ", $values);
+
+        preg_match_all('/^(?<spaces> *)/m', $values, $matches);
+        $result = $matches['spaces'];
+        $count=[];
+        foreach ($result as $key => $value) {
+            $count[$key] = strlen($value);
+        }
+        $count=array_unique($count, SORT_NUMERIC);
+        sort($count);
+            
+        foreach ($count as $key => $value) {
+            $values = preg_replace('/^ {'.$value.'}([^ ])/m', str_repeat("\t", $key).'\1', $values);
+        }
+
+        $values = explode("\n", $values);
+        return $values;
     }
 }
