@@ -166,6 +166,17 @@ class WebController extends AbstractController
         }
         return $this->render('web/newExercice.html.twig', ['formExo'=>$form->createView()]);
     }
+    
+    /**
+     * @Route("/exo_list/{id}", name="exo_cours")
+     */
+    public function liste_exos($id)
+    {
+        $repo_cour = $this->getDoctrine()->getRepository(Cours::class);
+        $cour = $repo_cour->find($id);
+        $exos = $cour->getExercices();
+        return $this->render('web/pageExo.html.twig', ['exos'=>$exos]);
+    }
 
     private function parse($values)
     {

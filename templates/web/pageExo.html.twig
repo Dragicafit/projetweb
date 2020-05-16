@@ -4,21 +4,36 @@
 {% endblock %}
 
 {% block body %}
-<table class="table">
-    <tr>
-        <th scope="col">N°</th>
-        <th scope="col">Consigne</th>
-        <th scope="col">Exercices</th>
-        <th scope="col">Réussite</th>
-    </tr>
-    {% set i = 1 %}
-    {% for ex in exo %}
-    <tr>
-        <th>{{ i++ }}</th>
-        <th>{{ ex.getExo() }}</th>
-        <th>{{ ex.consigne }}</th>
-        <th></th>
-    </tr>
-    {% endfor %}
-</table>
+	<table class="table">
+		<tr>
+			<th scope="col">
+				N°
+			</th>
+			<th scope="col">
+				Consigne
+			</th>
+			<th scope="col">
+				Exercices
+			</th>
+			<th scope="col">
+				Réussite
+			</th>
+		</tr>
+		{% set i = 1 %}
+		{% for exo in exos %}
+			<tr>
+				<th>
+					{{ i }}
+					{% set i = i+1 %}
+				</th>
+				<th>
+					{{ exo.consigne }}
+				</th>
+				<th>
+					{{ exo.getExo() | join(' ')}}
+				</th>
+				<th></th>
+			</tr>
+		{% endfor %}
+	</table>
 {% endblock %}
