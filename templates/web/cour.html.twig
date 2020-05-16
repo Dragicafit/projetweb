@@ -140,16 +140,59 @@
             // Create the list item:
             var item = document.createElement('li');
             item.setAttribute('class', 'facet');
+            item.setAttribute('id', 'li_' + i);
+            var btnPlus = document.createElement("BUTTON");
+            btnPlus.setAttribute('type', 'button');
+            btnPlus.setAttribute('style', 'float:right;');
+
+            btnPlus.setAttribute('onclick', 'add_indent(pad' + i + ',li_' + i + ',true)');
+            btnPlus.appendChild(document.createTextNode("+"));
+            var btnMoins = document.createElement("BUTTON");
+            btnMoins.setAttribute('type', 'button');
+            btnMoins.setAttribute('style', 'float:right;');
+
+            btnMoins.setAttribute('onclick', 'add_indent(pad' + i + ',li_' + i + ',false)');
+            btnMoins.appendChild(document.createTextNode("-"));
+            var pad = document.createElement('input');
+            pad.setAttribute('type', 'number');
+            pad.setAttribute('hidden', 'true');
+            pad.setAttribute('id', 'pad' + i);
+            pad.setAttribute('value', '0');
+
             // Set its contents:
             item.appendChild(document.createTextNode(options[i]));
-            // Add it to the list:
+            // Add au li:
+            item.appendChild(btnPlus);
+            item.appendChild(btnMoins);
+            item.appendChild(pad);
             list.appendChild(item);
         }
         form.appendChild(list);
         return form;
     }
-
     document.getElementById('foo').appendChild(makeUL(options, 'exo'));
+
+    function add_indent(num, l, plus) {
+        console.log(plus);
+        if (plus) {
+            if (num.value < 10) {
+                num.value++;
+                var n = num.value * 10;
+                l.style = "padding-left:" + n + "px";
+            }
+        } else {
+            if (num.value > 1) {
+                num.value--;
+                var n = num.value * 10;
+                l.style = "padding-left:" + n + "px";
+            } else {
+                num.value = 0;
+                l.style = "";
+            }
+        }
+        console.log(num.value);
+
+    }
 
     function rebuild_option() {
         var array = [];
