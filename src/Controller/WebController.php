@@ -98,12 +98,18 @@ class WebController extends AbstractController
 
         $cour = $repo->find($id);
         $exo = $cour->getExercices();
+        if ($exo_id==0) {
+            $user->addCour($cour);
+            $manager->persist($user);
+        }
+
         if ($exo_id >= sizeof($exo)) {
             $user->addDone($cour);
             $manager->persist($cour);
             $manager->flush();
             return $this->render('web/finexo.html.twig');
         }
+        $manager->flush();
         $val = $exo[$exo_id]->getExo();
         $res = $exo[$exo_id]->getExo();
         $cons = $exo[$exo_id]->getConsigne();

@@ -12,8 +12,9 @@
             <th scope="col">Titre</th>
             <th scope="col">Temps</th>
             <th scope="col">Créateur</th>
-            <th scope="col">Exercices</th>
             {% if app.user.prof %}
+            <th scope="col">Exercices</th>
+            <th scope="col">Eleves</th>
             <th scope="col">Réussite</th>
             {% else %}
             <th scope="col"></th>
@@ -28,14 +29,21 @@
             <td>{{ cour.auteur }}</td>
             {% if app.user.prof%}
             {% if app.user.username == cour.auteur %}
-            <td><a href="/exo_liste/{{cour.id}}"><button>Afficher</button></a></td>
+            <td><a href="/exo_liste/{{cour.id}}"><button class="btn btn-light">Afficher</button></a></td>
+            <td><select>
+                    <option value="All">-- Tous --</option>
+                    {% for eleve in cour.getUsers() %}
+                    <option value="{{ eleve.getUsername() }}">{{eleve.getUsername()}}</option>
+                    {% endfor %}
+                </select></td>
             <td>95%</td>
             {% else %}
             <td></td>
             <td></td>
+            <td></td>
             {% endif %}
             {% else %}
-            {% set bool = 0 %}
+            {# {% set bool = 0 %}
             {% for c in app.user.getDone() %}
             {% if c.id == cour.id %}
             {% set bool = 1 %}
@@ -43,10 +51,13 @@
             {% endfor %}
             {% if bool == 1%}
             <td>Terminé.</td>
-            {% else %}
-            <td><a style="float: right;" type="button" href="{{ path('cour_view', {'id':cour.id}) }}"> Essayer</a></td>
-            {% endif %}
-            {% endif %}
+            {% else %} #}
+            <td>
+                <a style="float: right;" href="{{ path('cour_view', {'id':cour.id}) }}"><button
+                        class="btn btn-primary">Essayer</button></a>
+            </td>
+            {# {% endif %}
+ #} {% endif %}
         </tr>
         {% endfor %}
     </tbody>

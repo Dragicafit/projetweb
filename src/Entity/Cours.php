@@ -39,7 +39,7 @@ class Cours
     private $exercices;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="Done")
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="cours")
      */
     private $users;
 
@@ -136,7 +136,7 @@ class Cours
     {
         if (!$this->users->contains($user)) {
             $this->users[] = $user;
-            $user->addDone($this);
+            $user->addCour($this);
         }
 
         return $this;
@@ -146,7 +146,7 @@ class Cours
     {
         if ($this->users->contains($user)) {
             $this->users->removeElement($user);
-            $user->removeDone($this);
+            $user->removeCour($this);
         }
 
         return $this;

@@ -63,11 +63,12 @@ class User implements UserInterface
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Cours", inversedBy="users")
      */
-    private $Done;
+    private $cours;
 
     public function __construct()
     {
         $this->Done = new ArrayCollection();
+        $this->cours = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -163,24 +164,24 @@ class User implements UserInterface
     /**
      * @return Collection|Cours[]
      */
-    public function getDone(): Collection
+    public function getCours(): Collection
     {
-        return $this->Done;
+        return $this->cours;
     }
 
-    public function addDone(Cours $done): self
+    public function addCour(Cours $cour): self
     {
-        if (!$this->Done->contains($done)) {
-            $this->Done[] = $done;
+        if (!$this->cours->contains($cour)) {
+            $this->cours[] = $cour;
         }
 
         return $this;
     }
 
-    public function removeDone(Cours $done): self
+    public function removeCour(Cours $cour): self
     {
-        if ($this->Done->contains($done)) {
-            $this->Done->removeElement($done);
+        if ($this->cours->contains($cour)) {
+            $this->cours->removeElement($cour);
         }
 
         return $this;
