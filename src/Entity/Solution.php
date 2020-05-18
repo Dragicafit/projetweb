@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Exercice;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\SolutionRepository")
@@ -29,7 +31,22 @@ class Solution
      */
     private $id_exercice;
 
-    public function __construct()
+    public static function initSolution(array $values, array $count, array $convert, Exercice $exo, EntityManagerInterface $manager)
+    {
+        $solution = new static();
+        foreach ($values as $key => $value) {
+            $ligne = Ligne::initLigne($value);
+            $manager->persist($ligne);
+
+            $exo->addIdLigne($ligne);
+            $tab = Tab::initTab($ligne, $convert[$count[$key]]);
+            $manager->persist($tab);
+            $solution->addIdTab($tab);
+        }
+        return $solution;
+    }
+
+    private function __construct()
     {
         $this->id_tab = new ArrayCollection();
     }
@@ -70,12 +87,12 @@ class Solution
         return $this;
     }
 
-    public function getIdExercice(): ?Exercice
+    public function getExercice(): ?Exercice
     {
         return $this->id_exercice;
     }
 
-    public function setIdExercice(?Exercice $id_exercice): self
+    public function setExercice(?Exercice $id_exercice): self
     {
         $this->id_exercice = $id_exercice;
 

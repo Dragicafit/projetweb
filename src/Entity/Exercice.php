@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Solution;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ExerciceRepository")
@@ -44,6 +46,13 @@ class Exercice
      */
     private $id_ligne;
 
+    public function initExercice(string $solutionRaw, string $consigne, EntityManagerInterface $manager)
+    {
+        $this->setConsigne($consigne)->parseSolution($solutionRaw, $manager);
+
+        return $this;
+    }
+
     public function __construct()
     {
         $this->id_solution = new ArrayCollection();
@@ -53,18 +62,6 @@ class Exercice
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getExo(): ?array
-    {
-        return $this->exo;
-    }
-
-    public function setExo(array $exo): self
-    {
-        $this->exo = $exo;
-
-        return $this;
     }
 
     public function getCour(): ?Cours
@@ -94,12 +91,12 @@ class Exercice
     /**
      * @return Collection|Solution[]
      */
-    public function getIdSolution(): Collection
+    public function getSolution(): Collection
     {
         return $this->id_solution;
     }
 
-    public function addIdSolution(Solution $idSolution): self
+    public function addSolution(Solution $idSolution): self
     {
         if (!$this->id_solution->contains($idSolution)) {
             $this->id_solution[] = $idSolution;
@@ -144,6 +141,31 @@ class Exercice
         if ($this->id_ligne->contains($idLigne)) {
             $this->id_ligne->removeElement($idLigne);
         }
+
+        return $this;
+    }
+
+    public function parseSolution(string $solutionRaw, EntityManagerInterface $manager)
+    {
+        $values = str_replace("\r", "", $solutionRaw);
+        $values = str_replace("\t", "    ", $values);
+
+        preg_match_all('/^(?<spaces> *)(?<text>[^ ].*)$/m', $values, $matches);
+
+        $result = $matches['spaces'];
+        $values = $matches['text'];
+
+        $count=[];
+        foreach ($result as $key => $value) {
+            $count[$key] = strlen($value);
+        }
+        $count2=array_unique($count, SORT_NUMERIC);
+        sort($count2);
+        $convert = array_flip($count2);
+
+        $solution = Solution::initSolution($values, $count, $convert, $this, $manager);
+        $manager->persist($solution);
+        $this->addSolution($solution);
 
         return $this;
     }

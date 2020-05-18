@@ -21,21 +21,14 @@ class CoursFixtures extends Fixture
                 ->setTemps(15);
             for ($j = 1; $j<=5; $j++) {
                 $exo = new Exercice();
-                $exo->setConsigne("Test des consignes");
-                $solution = new Solution();
+
+                $value="";
                 for ($k = 0; $k<10;$k++) {
-                    $ligne = new Ligne();
-                    $ligne->setText("Ligne xxxxxx");
-                    $manager->persist($ligne);
-                    $exo->addIdLigne($ligne);
-                    $tab = new Tab();
-                    $tab->setNbTab($k);
-                    $tab->setIdLigne($ligne);
-                    $manager->persist($tab);
-                    $solution->addIdTab($tab);
+                    $value.="Ligne $k\n";
                 }
-                $manager->persist($solution);
-                $exo->addIdSolution($solution);
+
+                $exo->initExercice($value, "Test des consignes", $manager);
+
                 $manager->persist($exo);
                 $cour->addExercice($exo);
             }

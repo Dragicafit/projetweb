@@ -33,7 +33,14 @@ class Ligne
      */
     private $id_exercices;
 
-    public function __construct()
+    public static function initLigne(string $text)
+    {
+        $ligne = new static();
+        $ligne->setText($text);
+        return $ligne;
+    }
+
+    private function __construct()
     {
         $this->tabs = new ArrayCollection();
         $this->id_exercices = new ArrayCollection();
@@ -49,7 +56,7 @@ class Ligne
         return $this->text;
     }
 
-    public function setText(string $Text): self
+    public function setText(string $text): self
     {
         $this->text = $text;
 
@@ -90,7 +97,7 @@ class Ligne
     /**
      * @return Collection|Exercice[]
      */
-    public function getIdExercices(): Collection
+    public function getExercices(): Collection
     {
         return $this->id_exercices;
     }

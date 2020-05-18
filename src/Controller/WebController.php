@@ -53,8 +53,8 @@ class WebController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $values = $request->request->get('value');
-            $values = $this->parse($values);
+            $value = $request->request->get('value');
+            $consigne = $request->request->get('consigne');
 
             $cour->setTitle($request->request->get('titre'))
                 ->setAuteur($user->getUsername())
@@ -63,8 +63,8 @@ class WebController extends AbstractController
             $manager->persist($cour);
             $manager->flush();
 
-            $exo->setExo($values)
-                ->setConsigne($request->request->get('consigne'));
+            $exercice->initExercice($value, $consigne);
+
             $manager->persist($exo);
             $cour->addExercice($exo);
             $manager->persist($exo);
@@ -152,11 +152,10 @@ class WebController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $repo = $this->getDoctrine()->getRepository(Cours::class);
 
-            $values = $request->request->get('value');
-            $values = $this->parse($values);
+            $value = $request->request->get('value');
+            $consigne = $request->request->get('consigne');
             
-            $exercice->setExo($values);
-            $exercice->setConsigne($request->request->get('consigne'));
+            $exercice->initExercice($value, $consigne);
 
             $manager->persist($exercice);
             $cour = $repo->find($id);
@@ -182,28 +181,5 @@ class WebController extends AbstractController
         $cour = $repo_cour->find($id);
         $exos = $cour->getExercices();
         return $this->render('web/pageExo.html.twig', ['exos'=>$exos]);
-    }
-
-    private function parse($values)
-    {
-        $values = str_replace("\r", "", $values);
-
-        $values = str_replace("\t", "    ", $values);
-
-        preg_match_all('/^(?<spaces> *)/m', $values, $matches);
-        $result = $matches['spaces'];
-        $count=[];
-        foreach ($result as $key => $value) {
-            $count[$key] = strlen($value);
-        }
-        $count=array_unique($count, SORT_NUMERIC);
-        sort($count);
-            
-        foreach ($count as $key => $value) {
-            $values = preg_replace('/^ {'.$value.'}([^ ])/m', str_repeat("\t", $key).'\1', $values);
-        }
-
-        $values = explode("\n", $values);
-        return $values;
     }
 }

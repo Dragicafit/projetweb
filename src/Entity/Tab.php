@@ -33,6 +33,18 @@ class Tab
      */
     private $id_solution;
 
+    public static function initTab(Ligne $ligne, int $nb_tab)
+    {
+        $tab = new static();
+        $tab->setIdLigne($ligne)->setNbTab($nb_tab);
+
+        return $tab;
+    }
+
+    private function __construct()
+    {
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -62,12 +74,12 @@ class Tab
         return $this;
     }
 
-    public function getIdSolution(): ?Solution
+    public function getSolution(): ?Solution
     {
         return $this->id_solution;
     }
 
-    public function setIdSolution(?Solution $id_solution): self
+    public function setSolution(?Solution $id_solution): self
     {
         $this->id_solution = $id_solution;
 
