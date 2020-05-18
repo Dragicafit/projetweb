@@ -34,7 +34,7 @@ class UserFixtures extends Fixture
         ->setPassword($this->encoder->encodePassword($userE, 'testtest'))
         ->setProf(false);
 
-        $manager->persist($userP);
+        $manager->persist($userE);
 
         $manager->flush();
     }
