@@ -29,7 +29,7 @@
             <td>{{ cour.auteur }}</td>
             {% if app.user.prof%}
             {% if app.user.username == cour.auteur %}
-            <td><a href="/exo_liste/{{cour.id}}"><button class="btn btn-light">Afficher</button></a></td>
+            <td><a href="/exo_list/{{cour.id}}"><button class="btn btn-light">Afficher</button></a></td>
             <td><select>
                     <option value="All">-- Tous --</option>
                     {% for eleve in cour.getUsers() %}
