@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TabRepository")
@@ -33,10 +34,11 @@ class Tab
      */
     private $id_solution;
 
-    public static function initTab(Ligne $ligne, int $nb_tab)
+    public static function initTab(Ligne $ligne, int $nb_tab, EntityManagerInterface $manager)
     {
         $tab = new static();
         $tab->setIdLigne($ligne)->setNbTab($nb_tab);
+        $manager->persist($tab);
 
         return $tab;
     }

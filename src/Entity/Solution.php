@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Exception;
+use App\Entity\Ligne;
 use App\Entity\Exercice;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,15 +36,21 @@ class Solution
     public static function initSolution(array $values, array $count, array $convert, Exercice $exo, EntityManagerInterface $manager)
     {
         $solution = new static();
-        foreach ($values as $key => $value) {
-            $ligne = Ligne::initLigne($value);
-            $manager->persist($ligne);
 
+        $lignes = [];
+
+        foreach ($values as $key => $value) {
+            $ligne = Ligne::initLigne($value, $manager);
             $exo->addIdLigne($ligne);
-            $tab = Tab::initTab($ligne, $convert[$count[$key]]);
-            $manager->persist($tab);
+            $lignes[$key] = $ligne;
+            $manager->flush();
+        }
+        foreach ($values as $key => $value) {
+            $tab = Tab::initTab($lignes[$key], $convert[$count[$key]], $manager);
             $solution->addIdTab($tab);
         }
+        $manager->persist($solution);
+
         return $solution;
     }
 

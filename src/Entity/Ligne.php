@@ -2,12 +2,16 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Exception;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\LigneRepository")
+ * @UniqueEntity(fields="text", message="")
  */
 class Ligne
 {
@@ -19,12 +23,12 @@ class Ligne
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      */
     private $text;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Tab", mappedBy="id_ligne", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Tab", mappedBy="id_ligne")
      */
     private $tabs;
 
@@ -33,10 +37,18 @@ class Ligne
      */
     private $id_exercices;
 
-    public static function initLigne(string $text)
+    public static function initLigne(string $text, EntityManagerInterface $manager)
     {
+        $ligne = $manager->getRepository(Ligne::class)->findOneBy(['text' => $text]);
+
+        if ($ligne != null) {
+            return $ligne;
+        }
+
         $ligne = new static();
         $ligne->setText($text);
+        $manager->persist($ligne);
+
         return $ligne;
     }
 
