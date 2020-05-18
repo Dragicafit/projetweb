@@ -118,16 +118,12 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
     //Test
-    var result = [];
-    {% for r in res %}
-    result.push("{{ r }}");
-    {% endfor %}
     var options = [];
     {% for l in exo %}
     options.push("{{ l.text }}");
     {% endfor %}
     console.log(options);
-    console.log(result);
+    //console.log(result);
 
     function makeUL(options, val) {
         var form = document.createElement('form');
@@ -216,13 +212,13 @@
     }
 
     function send_value() {
-        var val = rebuild_option();
-        if (is_same(val, result)) {
-            document.getElementById('btn_sub').hidden = false;
-        } else {
-            document.getElementById('btn_sub').hidden = true;
-            alert('Encore un effort, c\'est presque bon !');
-        }
+        /*         var val = rebuild_option();
+                if (is_same(val, result)) {
+                    document.getElementById('btn_sub').hidden = false;
+                } else {
+                    document.getElementById('btn_sub').hidden = true;
+                    alert('Encore un effort, c\'est presque bon !');
+                } */
     }
 
     $(function () {
