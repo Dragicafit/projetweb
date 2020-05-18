@@ -23,18 +23,19 @@ class CoursFixtures extends Fixture
                 $exo = new Exercice();
 
                 $value="";
-                for ($k = 0; $k<10;$k++) {
-                    $value.="Ligne $k\n";
+                for ($k = 0; $k<5;$k++) {
+                    $value.="  Ligne $k\n";
+                }
+                for ($k = 0; $k<5;$k++) {
+                    $value.=" Ligne $k\n";
                 }
 
                 $exo->initExercice($value, "Test des consignes", $manager);
 
-                $manager->persist($exo);
                 $cour->addExercice($exo);
+                $manager->persist($cour);
             }
-            $manager->persist($cour);
         }
-
         $manager->flush();
     }
 }

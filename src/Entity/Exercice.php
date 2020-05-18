@@ -49,6 +49,7 @@ class Exercice
     public function initExercice(string $solutionRaw, string $consigne, EntityManagerInterface $manager)
     {
         $this->setConsigne($consigne)->parseSolution($solutionRaw, $manager);
+        $manager->persist($this);
 
         return $this;
     }
@@ -164,7 +165,6 @@ class Exercice
         $convert = array_flip($count2);
 
         $solution = Solution::initSolution($values, $count, $convert, $this, $manager);
-        $manager->persist($solution);
         $this->addSolution($solution);
 
         return $this;
