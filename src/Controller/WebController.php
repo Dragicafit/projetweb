@@ -111,10 +111,8 @@ class WebController extends AbstractController
         }
         $manager->flush();
         $val = $exo[$exo_id]->getIdLigne();
-        $res = $exo[$exo_id]->getExo();
         $cons = $exo[$exo_id]->getConsigne();
-        shuffle($val);
-        return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$val, 'res'=>$res, 'c_id'=> $id, 'e_id'=> $exo_id, 'cons'=>$cons]);
+        return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$val, 'c_id'=> $id, 'e_id'=> $exo_id, 'cons'=>$cons]);
     }
 
     /**
