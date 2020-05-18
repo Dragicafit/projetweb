@@ -2,8 +2,11 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Tab;
 use App\Entity\Cours;
+use App\Entity\Ligne;
 use App\Entity\Exercice;
+use App\Entity\Solution;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 
@@ -18,8 +21,21 @@ class CoursFixtures extends Fixture
                 ->setTemps(15);
             for ($j = 1; $j<=5; $j++) {
                 $exo = new Exercice();
-                $exo->setExo(["int i = 1;", "While(i < 10){" , "print(\"Salut c'est la \".val.\"eme fois que tu me vois !\");","i++;","} "]);
                 $exo->setConsigne("Test des consignes");
+                $solution = new Solution();
+                for ($k = 0; $k<10;$k++) {
+                    $ligne = new Ligne();
+                    $ligne->setText("Ligne xxxxxx");
+                    $manager->persist($ligne);
+                    $exo->addIdLigne($ligne);
+                    $tab = new Tab();
+                    $tab->setNbTab($k);
+                    $tab->setIdLigne($ligne);
+                    $manager->persist($tab);
+                    $solution->addIdTab($tab);
+                }
+                $manager->persist($solution);
+                $exo->addIdSolution($solution);
                 $manager->persist($exo);
                 $cour->addExercice($exo);
             }

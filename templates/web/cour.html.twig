@@ -123,8 +123,8 @@
     result.push("{{ r }}");
     {% endfor %}
     var options = [];
-    {% for ex in exo %}
-    options.push("{{ ex }}");
+    {% for l in exo %}
+    options.push("{{ l.text }}");
     {% endfor %}
     console.log(options);
     console.log(result);
