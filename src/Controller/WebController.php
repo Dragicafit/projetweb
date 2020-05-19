@@ -2,17 +2,18 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Entity\Cours;
 use App\Entity\Exercice;
+
 use Doctrine\ORM\EntityManagerInterface;
-
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType ;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,7 +55,7 @@ class WebController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $cour->setTitle($request->request->get('titre'))
-                ->setAuteur($user->getUsername())
+                ->setAuteur($user)
                 ->setTemps($request->request->get('temps'));
             
             $manager->persist($cour);
@@ -125,10 +126,8 @@ class WebController extends AbstractController
      */
     public function my_cours(UserInterface $user, EntityManagerInterface $manager)
     {
-        $repo = $manager->getRepository(Cours::class);
-
-        $cour = $repo->findBy(array('auteur' => $user->getUsername()));
-        return $this->render('web/home.html.twig', ['liste_cours'=>$cour]);
+        $cours = $user->getCoursProf();
+        return $this->render('web/home.html.twig', ['liste_cours'=>$cours]);
     }
 
     /**

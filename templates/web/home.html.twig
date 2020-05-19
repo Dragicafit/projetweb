@@ -26,13 +26,14 @@
         <tr>
             <td>{{ cour.title }}</td>
             <td>{{ cour.temps }} minutes</td>
-            <td>{{ cour.auteur }}</td>
+            <td>{{ cour.auteur.username }}</td>
             {% if app.user.prof%}
-            {% if app.user.username == cour.auteur %}
+            {% if app.user == cour.auteur %}
+
             <td><a href="/exo_list/{{cour.id}}"><button class="btn btn-light">Afficher</button></a></td>
             <td><select>
                     <option value="All">-- Tous --</option>
-                    {% for eleve in cour.getUsers() %}
+                    {% for eleve in cour.getEleves() %}
                     <option value="{{ eleve.getUsername() }}">{{eleve.getUsername()}}</option>
                     {% endfor %}
                 </select></td>

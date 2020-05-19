@@ -61,14 +61,20 @@ class User implements UserInterface
     private $prof;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Cours", inversedBy="users")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Cours", inversedBy="eleves")
      */
-    private $cours;
+    private $cours_eleve;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Cours", mappedBy="auteur", orphanRemoval=true)
+     */
+    private $cours_prof;
 
     public function __construct()
     {
         $this->Done = new ArrayCollection();
-        $this->cours = new ArrayCollection();
+        $this->cours_eleve = new ArrayCollection();
+        $this->cours_prof = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -164,24 +170,55 @@ class User implements UserInterface
     /**
      * @return Collection|Cours[]
      */
-    public function getCours(): Collection
+    public function getCoursEleve(): Collection
     {
-        return $this->cours;
+        return $this->cours_eleve;
     }
 
-    public function addCour(Cours $cour): self
+    public function addCoursEleve(Cours $coursEleve): self
     {
-        if (!$this->cours->contains($cour)) {
-            $this->cours[] = $cour;
+        if (!$this->cours_eleve->contains($coursEleve)) {
+            $this->cours_eleve[] = $coursEleve;
         }
 
         return $this;
     }
 
-    public function removeCour(Cours $cour): self
+    public function removeCoursEleve(Cours $coursEleve): self
     {
-        if ($this->cours->contains($cour)) {
-            $this->cours->removeElement($cour);
+        if ($this->cours_eleve->contains($coursEleve)) {
+            $this->cours_eleve->removeElement($coursEleve);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Cours[]
+     */
+    public function getCoursProf(): Collection
+    {
+        return $this->cours_prof;
+    }
+
+    public function addCoursProf(Cours $coursProf): self
+    {
+        if (!$this->cours_prof->contains($coursProf)) {
+            $this->cours_prof[] = $coursProf;
+            $coursProf->setAuteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCoursProf(Cours $coursProf): self
+    {
+        if ($this->cours_prof->contains($coursProf)) {
+            $this->cours_prof->removeElement($coursProf);
+            // set the owning side to null (unless already changed)
+            if ($coursProf->getAuteur() === $this) {
+                $coursProf->setAuteur(null);
+            }
         }
 
         return $this;

@@ -19,7 +19,8 @@ class Cours
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="cours_prof")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $auteur;
 
@@ -39,16 +40,15 @@ class Cours
     private $exercices;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="cours")
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="cours_eleve")
      */
-    private $users;
+    private $eleves;
 
 
     public function __construct()
     {
         $this->exercices = new ArrayCollection();
         $this->eleves = new ArrayCollection();
-        $this->users = new ArrayCollection();
     }
 
 
@@ -57,12 +57,12 @@ class Cours
         return $this->id;
     }
 
-    public function getAuteur(): ?string
+    public function getAuteur(): ?User
     {
         return $this->auteur;
     }
 
-    public function setAuteur(string $auteur): self
+    public function setAuteur(?User $auteur): self
     {
         $this->auteur = $auteur;
 
@@ -127,26 +127,26 @@ class Cours
     /**
      * @return Collection|User[]
      */
-    public function getUsers(): Collection
+    public function getEleves(): Collection
     {
-        return $this->users;
+        return $this->eleves;
     }
 
-    public function addUser(User $user): self
+    public function addEleve(User $eleve): self
     {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
-            $user->addCour($this);
+        if (!$this->eleves->contains($eleve)) {
+            $this->eleves[] = $eleve;
+            $eleve->addCoursEleve($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): self
+    public function removeEleve(User $eleve): self
     {
-        if ($this->users->contains($user)) {
-            $this->users->removeElement($user);
-            $user->removeCour($this);
+        if ($this->eleves->contains($eleve)) {
+            $this->eleves->removeElement($eleve);
+            $eleve->removeCoursEleve($this);
         }
 
         return $this;
