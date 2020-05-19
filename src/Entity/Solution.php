@@ -25,13 +25,13 @@ class Solution
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Tab", mappedBy="solution", orphanRemoval=true)
      */
-    private $id_tab;
+    private $tab;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Exercice", inversedBy="id_solution")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Exercice", inversedBy="solution")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $id_exercice;
+    private $exercice;
 
     public static function initSolution(array $values, array $count, array $convert, Exercice $exo, EntityManagerInterface $manager)
     {
@@ -41,13 +41,13 @@ class Solution
 
         foreach ($values as $key => $value) {
             $ligne = Ligne::initLigne($value, $manager);
-            $exo->addIdLigne($ligne);
+            $exo->addLigne($ligne);
             $lignes[$key] = $ligne;
             $manager->flush();
         }
         foreach ($values as $key => $value) {
             $tab = Tab::initTab($lignes[$key], $convert[$count[$key]], $manager);
-            $solution->addIdTab($tab);
+            $solution->addTab($tab);
         }
         $manager->persist($solution);
 
@@ -56,7 +56,7 @@ class Solution
 
     private function __construct()
     {
-        $this->id_tab = new ArrayCollection();
+        $this->tab = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -67,28 +67,28 @@ class Solution
     /**
      * @return Collection|Tab[]
      */
-    public function getIdTab(): Collection
+    public function getTab(): Collection
     {
-        return $this->id_tab;
+        return $this->tab;
     }
 
-    public function addIdTab(Tab $idTab): self
+    public function addTab(Tab $tab): self
     {
-        if (!$this->id_tab->contains($idTab)) {
-            $this->id_tab[] = $idTab;
-            $idTab->setSolution($this);
+        if (!$this->tab->contains($tab)) {
+            $this->tab[] = $tab;
+            $tab->setSolution($this);
         }
 
         return $this;
     }
 
-    public function removeIdTab(Tab $idTab): self
+    public function removeTab(Tab $tab): self
     {
-        if ($this->id_tab->contains($idTab)) {
-            $this->id_tab->removeElement($idTab);
+        if ($this->tab->contains($tab)) {
+            $this->tab->removeElement($tab);
             // set the owning side to null (unless already changed)
-            if ($idTab->getSolution() === $this) {
-                $idTab->setSolution(null);
+            if ($tab->getSolution() === $this) {
+                $tab->setSolution(null);
             }
         }
 
@@ -97,12 +97,12 @@ class Solution
 
     public function getExercice(): ?Exercice
     {
-        return $this->id_exercice;
+        return $this->exercice;
     }
 
-    public function setExercice(?Exercice $id_exercice): self
+    public function setExercice(?Exercice $exercice): self
     {
-        $this->id_exercice = $id_exercice;
+        $this->exercice = $exercice;
 
         return $this;
     }

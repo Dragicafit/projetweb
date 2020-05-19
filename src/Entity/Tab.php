@@ -26,18 +26,18 @@ class Tab
      * @ORM\ManyToOne(targetEntity="App\Entity\Ligne", inversedBy="tabs")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $id_ligne;
+    private $ligne;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Solution", inversedBy="id_tab")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Solution", inversedBy="tab")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $id_solution;
+    private $solution;
 
     public static function initTab(Ligne $ligne, int $nb_tab, EntityManagerInterface $manager)
     {
         $tab = new static();
-        $tab->setIdLigne($ligne)->setNbTab($nb_tab);
+        $tab->setLigne($ligne)->setNbTab($nb_tab);
         $manager->persist($tab);
 
         return $tab;
@@ -64,26 +64,26 @@ class Tab
         return $this;
     }
 
-    public function getIdLigne(): ?Ligne
+    public function getLigne(): ?Ligne
     {
-        return $this->id_ligne;
+        return $this->ligne;
     }
 
-    public function setIdLigne(?Ligne $id_ligne): self
+    public function setLigne(?Ligne $ligne): self
     {
-        $this->id_ligne = $id_ligne;
+        $this->ligne = $ligne;
 
         return $this;
     }
 
     public function getSolution(): ?Solution
     {
-        return $this->id_solution;
+        return $this->solution;
     }
 
-    public function setSolution(?Solution $id_solution): self
+    public function setSolution(?Solution $solution): self
     {
-        $this->id_solution = $id_solution;
+        $this->solution = $solution;
 
         return $this;
     }

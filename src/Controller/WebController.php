@@ -22,9 +22,9 @@ class WebController extends AbstractController
     /**
      * @Route("/", name="home")
      */
-    public function home()
+    public function home(EntityManagerInterface $manager)
     {
-        $repo = $this->getDoctrine()->getRepository(Cours::class);
+        $repo = $manager->getRepository(Cours::class);
         
         $cours = $repo->findAll();
 
@@ -99,7 +99,7 @@ class WebController extends AbstractController
      */
     public function show_next($id, $exo_id, UserInterface $user, EntityManagerInterface $manager)
     {
-        $repo = $this->getDoctrine()->getRepository(Cours::class);
+        $repo = $manager->getRepository(Cours::class);
 
         $cour = $repo->find($id);
         $exo = $cour->getExercices();
@@ -115,7 +115,7 @@ class WebController extends AbstractController
             return $this->render('web/finexo.html.twig');
         }
         $manager->flush();
-        $val = $exo[$exo_id]->getIdLigne();
+        $val = $exo[$exo_id]->getLigne();
         $cons = $exo[$exo_id]->getConsigne();
         return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$val, 'c_id'=> $id, 'e_id'=> $exo_id, 'cons'=>$cons]);
     }
@@ -123,9 +123,9 @@ class WebController extends AbstractController
     /**
      * @Route("/mescours", name="mes_cours")
      */
-    public function my_cours(UserInterface $user)
+    public function my_cours(UserInterface $user, EntityManagerInterface $manager)
     {
-        $repo = $this->getDoctrine()->getRepository(Cours::class);
+        $repo = $manager->getRepository(Cours::class);
 
         $cour = $repo->findBy(array('auteur' => $user->getUsername()));
         return $this->render('web/home.html.twig', ['liste_cours'=>$cour]);
@@ -153,7 +153,7 @@ class WebController extends AbstractController
                     ->getForm();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $repo = $this->getDoctrine()->getRepository(Cours::class);
+            $repo = $manager>getRepository(Cours::class);
             $nb_solution = $request->request->get('count_sol');
 
             $value = $request->request->get('solution1');
@@ -182,9 +182,9 @@ class WebController extends AbstractController
     /**
      * @Route("/exo_list/{id}", name="exo_cours")
      */
-    public function liste_exos($id)
+    public function liste_exos($id, EntityManagerInterface $manager)
     {
-        $repo_cour = $this->getDoctrine()->getRepository(Cours::class);
+        $repo_cour = $manager->getRepository(Cours::class);
         $cour = $repo_cour->find($id);
         $exos = $cour->getExercices();
         return $this->render('web/pageExo.html.twig', ['exos'=>$exos]);

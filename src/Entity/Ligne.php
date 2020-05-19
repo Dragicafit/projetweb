@@ -28,14 +28,14 @@ class Ligne
     private $text;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Tab", mappedBy="id_ligne")
+     * @ORM\OneToMany(targetEntity="App\Entity\Tab", mappedBy="ligne")
      */
     private $tabs;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Exercice", mappedBy="id_ligne")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Exercice", mappedBy="ligne")
      */
-    private $id_exercices;
+    private $exercices;
 
     public static function initLigne(string $text, EntityManagerInterface $manager)
     {
@@ -55,7 +55,7 @@ class Ligne
     private function __construct()
     {
         $this->tabs = new ArrayCollection();
-        $this->id_exercices = new ArrayCollection();
+        $this->exercices = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -87,7 +87,7 @@ class Ligne
     {
         if (!$this->tabs->contains($tab)) {
             $this->tabs[] = $tab;
-            $tab->setIdLigne($this);
+            $tab->setLigne($this);
         }
 
         return $this;
@@ -98,8 +98,8 @@ class Ligne
         if ($this->tabs->contains($tab)) {
             $this->tabs->removeElement($tab);
             // set the owning side to null (unless already changed)
-            if ($tab->getIdLigne() === $this) {
-                $tab->setIdLigne(null);
+            if ($tab->getLigne() === $this) {
+                $tab->setLigne(null);
             }
         }
 
@@ -111,24 +111,24 @@ class Ligne
      */
     public function getExercices(): Collection
     {
-        return $this->id_exercices;
+        return $this->exercices;
     }
 
-    public function addIdExercice(Exercice $idExercice): self
+    public function addIdExercice(Exercice $Exercice): self
     {
-        if (!$this->id_exercices->contains($idExercice)) {
-            $this->id_exercices[] = $idExercice;
-            $idExercice->addIdLigne($this);
+        if (!$this->exercices->contains($Exercice)) {
+            $this->exercices[] = $Exercice;
+            $Exercice->addLigne($this);
         }
 
         return $this;
     }
 
-    public function removeIdExercice(Exercice $idExercice): self
+    public function removeIdExercice(Exercice $Exercice): self
     {
-        if ($this->id_exercices->contains($idExercice)) {
-            $this->id_exercices->removeElement($idExercice);
-            $idExercice->removeIdLigne($this);
+        if ($this->exercices->contains($Exercice)) {
+            $this->exercices->removeElement($Exercice);
+            $Exercice->removeLigne($this);
         }
 
         return $this;
