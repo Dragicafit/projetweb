@@ -153,7 +153,7 @@ class WebController extends AbstractController
                     ->getForm();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $repo = $manager>getRepository(Cours::class);
+            $repo = $manager->getRepository(Cours::class);
             $nb_solution = $request->request->get('count_sol');
 
             $value = $request->request->get('solution1');
