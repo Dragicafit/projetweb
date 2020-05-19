@@ -110,7 +110,7 @@ class WebController extends AbstractController
             return $this->render('web/finexo.html.twig');
         }
         $manager->flush();
-        $val = $exo[$exo_id]->getIdLigne();
+        $val = $exo[$exo_id]->getLigne();
         $cons = $exo[$exo_id]->getConsigne();
         return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$val, 'c_id'=> $id, 'e_id'=> $exo_id, 'cons'=>$cons]);
     }

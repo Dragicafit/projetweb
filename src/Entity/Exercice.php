@@ -39,12 +39,12 @@ class Exercice
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Solution", mappedBy="exercice", orphanRemoval=true)
      */
-    private $id_solution;
+    private $solution;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Ligne", inversedBy="id_exercices")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Ligne", inversedBy="exercices")
      */
-    private $id_ligne;
+    private $ligne;
 
     public function initExercice(string $solutionRaw, string $consigne, EntityManagerInterface $manager)
     {
@@ -56,8 +56,8 @@ class Exercice
 
     public function __construct()
     {
-        $this->id_solution = new ArrayCollection();
-        $this->id_ligne = new ArrayCollection();
+        $this->solution = new ArrayCollection();
+        $this->ligne = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -94,26 +94,26 @@ class Exercice
      */
     public function getSolution(): Collection
     {
-        return $this->id_solution;
+        return $this->solution;
     }
 
-    public function addSolution(Solution $idSolution): self
+    public function addSolution(Solution $solution): self
     {
-        if (!$this->id_solution->contains($idSolution)) {
-            $this->id_solution[] = $idSolution;
-            $idSolution->setExercice($this);
+        if (!$this->solution->contains($solution)) {
+            $this->solution[] = $solution;
+            $solution->setExercice($this);
         }
 
         return $this;
     }
 
-    public function removeIdSolution(Solution $idSolution): self
+    public function removeSolution(Solution $solution): self
     {
-        if ($this->id_solution->contains($idSolution)) {
-            $this->id_solution->removeElement($idSolution);
+        if ($this->solution->contains($solution)) {
+            $this->solution->removeElement($solution);
             // set the owning side to null (unless already changed)
-            if ($idSolution->getExercice() === $this) {
-                $idSolution->setExercice(null);
+            if ($solution->getExercice() === $this) {
+                $solution->setExercice(null);
             }
         }
 
@@ -123,24 +123,24 @@ class Exercice
     /**
      * @return Collection|Ligne[]
      */
-    public function getIdLigne(): Collection
+    public function getLigne(): Collection
     {
-        return $this->id_ligne;
+        return $this->ligne;
     }
 
-    public function addIdLigne(Ligne $idLigne): self
+    public function addLigne(Ligne $ligne): self
     {
-        if (!$this->id_ligne->contains($idLigne)) {
-            $this->id_ligne[] = $idLigne;
+        if (!$this->ligne->contains($ligne)) {
+            $this->ligne[] = $ligne;
         }
 
         return $this;
     }
 
-    public function removeIdLigne(Ligne $idLigne): self
+    public function removeLigne(Ligne $ligne): self
     {
-        if ($this->id_ligne->contains($idLigne)) {
-            $this->id_ligne->removeElement($idLigne);
+        if ($this->ligne->contains($ligne)) {
+            $this->ligne->removeElement($ligne);
         }
 
         return $this;
