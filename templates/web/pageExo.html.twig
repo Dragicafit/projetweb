@@ -30,7 +30,10 @@
 					{{ exo.consigne }}
 				</th>
 				<th>
-					{{ exo.getExo() | join(' ')}}
+					{% for l in exo.getLigne()[:4] %}
+						{{ l.text }}
+						<br/>
+					{% endfor %}
 				</th>
 				<th></th>
 			</tr>
