@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
-
 {% block body %}
+{% if app.user.prof %}
+
 <div class="container">
     {{ form_start(formCour) }}
     <div class="container">
@@ -43,7 +44,7 @@
         {{ form_widget(formCour.save) }}
         {{ form_widget(formCour.next) }}
     </div>
-    <input type="number" id="count_sol" value="1" hidden>
+    <input type="number" id="count_sol" name="count_sol" value="1" hidden>
     {{ form_end(formCour ) }}
 </div>
 
@@ -75,10 +76,16 @@
         row.appendChild(col);
         document.getElementById("count_sol").setAttribute('value', nb_solution);
         let elem = document.getElementById("solution_" + (nb_solution - 1));
-        console.log(row);
+        console.log(nb_solution);
         elem.after(row);
     }
 </script>
 {% endblock %}
+
+{% else %}
+<div class="container">
+    <h1 style="text-align: center;"> 404 Not found </h1>
+</div>
+{% endif %}
 
 {% endblock %}

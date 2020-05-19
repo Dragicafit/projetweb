@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+{% if app.user.prof %}
+
 <div class="container">
     <h1>Encore un exercice ?</h1>
     <br>
@@ -36,7 +38,7 @@
     {{ form_widget(formExo.next) }}
     {{ form_widget(formExo.save) }}
 </div>
-<input type="number" id="count_sol" value="1" hidden>
+<input type="number" id="count_sol" name="count_sol" value="1" hidden>
 {{ form_end(formExo) }}
 </div>
 {% block script %}
@@ -72,4 +74,9 @@
     }
 </script>
 {% endblock %}
+{% else %}
+<div class="container">
+    <h1 style="text-align: center;"> 404 Not found </h1>
+</div>
+{% endif %}
 {% endblock %}
