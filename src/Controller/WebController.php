@@ -32,7 +32,7 @@ class WebController extends AbstractController
         return $this->render('web/home.html.twig', ['liste_cours'=>$cours]);
     }
 
-    public function newExo($request, EntityManagerInterface $manager, $cour, $exercice)
+    public function newExo($request, EntityManagerInterface $manager, $cour, $exercice, $form)
     {
         $nb_solution = $request->get('count_sol');
         $value = $request->get('solution1');
@@ -46,6 +46,10 @@ class WebController extends AbstractController
         $cour->addExercice($exercice);
         $manager->persist($cour);
         $manager->flush();
+        if ($form->get('save')->isClicked()) {
+            return $this->redirectToRoute('home');
+        }
+        return $this->redirectToRoute('add_exo', ['id' => $cour->getId()]);
     }
 
     /**
@@ -70,18 +74,11 @@ class WebController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $repo = $manager->getRepository(Cours::class);
-
             $cour->setTitle($request->request->get('titre'))
                 ->setAuteur($user)
                 ->setTemps($request->request->get('temps'));
 
-            $this->newExo($request->request, $manager, $cour, $exercice);
-            if ($form->get('save')->isClicked()) {
-                return $this->redirectToRoute('home');
-            } else {
-                return $this->redirectToRoute('add_exo', ['id' => $cour->getId()]);
-            }
+            return $this->newExo($request->request, $manager, $cour, $exercice, $form);
         }
         return $this->render('web/createCour.html.twig', ['formCour'=>$form->createView()]);
     }
@@ -104,7 +101,7 @@ class WebController extends AbstractController
         $cour = $repo->find($id);
         $exo = $cour->getExercices();
         if ($exo_id==0) {
-            $user->addCour($cour);
+            $user->addCoursEleve($cour);
             $manager->persist($user);
         }
 
@@ -150,18 +147,12 @@ class WebController extends AbstractController
                     ->add('next', SubmitType::class, ['label'=>'Ajouter un exercice', 'attr'=>['class'=>'btn btn-primary pull-right']])
                     ->getForm();
         $form->handleRequest($request);
-        print_r($form->isSubmitted());
         if ($form->isSubmitted() && $form->isValid()) {
             $repo = $manager->getRepository(Cours::class);
             $cour = $repo->find($id);
-            $this->newExo($request->request, $manager, $cour, $exercice);
-            if ($form->get('save')->isClicked()) {
-                return $this->redirectToRoute('home');
-            } else {
-                return $this->redirectToRoute('add_exo', ['id' => $cour->getId()]);
-            }
+            return $this->newExo($request->request, $manager, $cour, $exercice, $form);
         }
-        return $this->render('web/newExercice.html.twig', ['formExo'=>$form->createView(), 'c_id'=>$id]);
+        return $this->render('web/newExercice.html.twig', ['formExo'=>$form->createView()]);
     }
     
     /**
