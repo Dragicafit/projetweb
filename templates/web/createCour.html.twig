@@ -13,23 +13,74 @@
             <input type="number" name="temps" min="1" max="60" required> minutes.
         </fieldset>
         <br>
+        <h4>Créer un exercice :</h4>
         <fieldset>
-            <h4>Créer un exercice :</h4>
-            <fieldset>
-                <textarea class="form-control" name="consigne" cols="33" rows="5" placeholder="Taper votre consigne"
-                    required></textarea>
-            </fieldset>
-            <fieldset><textarea class="form-control " rows="5" cols="33" name="value" placeholder="Taper votre code"
-                    required></textarea></fieldset>
+            <textarea class="form-control" name="consigne" cols="33" rows="5" placeholder="Taper votre consigne"
+                required></textarea>
         </fieldset>
+        <br>
+        <div class="row" id="solution_1">
+            <div class="col-7">
+                <fieldset>
+                    <h5>Entrez une solution :</h5>
+                    <textarea class="form-control " rows="5" cols="33" name="solution1" placeholder="Taper votre code"
+                        required></textarea>
+                </fieldset>
+            </div>
+            <div class="col-5">
+                <fieldset>
+                    <h5>Entrez des lignes inutiles :</h5>
+                    <textarea class="form-control " rows="5" cols="33" name="bad_lines"
+                        placeholder="Taper de mauvaises lignes"></textarea>
+                </fieldset>
+            </div>
+        </div>
+        <button type="button" id="btn_solu" onclick="new_solution()" style="margin-top:5px;"
+            class="btn btn-success">Ajouter une
+            solution</button>
+        <br>
         <br>
         <fieldset>
             {{ form_widget(formCour.next) }}
-
             {{ form_widget(formCour.save) }}
         </fieldset>
     </div>
+    <input type="number" id="count_sol" value="1" hidden>
     {{ form_end(formCour ) }}
 </div>
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    var nb_solution = 1;
+    function new_solution() {
+        nb_solution++;
+        let row = document.createElement('div');
+        row.setAttribute('class', 'row');
+        row.setAttribute('id', 'solution' + nb_solution);
+        row.setAttribute('style', 'margin-top:10px;');
+        let col = document.createElement('div');
+        col.setAttribute('class', 'col-7');
+        let field = document.createElement('fieldset');
+        let h = document.createElement('h5');
+        let area = document.createElement('textarea');
+        area.setAttribute('class', 'form-control');
+        area.setAttribute('rows', '5');
+        area.setAttribute('cols', '33');
+        area.setAttribute('name', 'solution' + nb_solution);
+        area.setAttribute('placeholder', 'Tapez votre code');
+        area.setAttribute('required', 'true');
+        h.appendChild(area);
+        field.appendChild(h);
+        col.appendChild(field);
+        row.appendChild(col);
+        document.getElementById("count_sol").setAttribute('value', nb_solution);
+        let elem = document.getElementById("solution_" + (nb_solution - 1));
+        console.log(row);
+        elem.after(row);
+    }
+</script>
+{% endblock %}
 
 {% endblock %}

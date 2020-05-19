@@ -53,17 +53,22 @@ class WebController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $value = $request->request->get('value');
-            $consigne = $request->request->get('consigne');
-
             $cour->setTitle($request->request->get('titre'))
                 ->setAuteur($user->getUsername())
                 ->setTemps($request->request->get('temps'));
             
             $manager->persist($cour);
             $manager->flush();
-
+            $nb_solution = $request->request->get('count_sol');
+            
+            $value = $request->request->get('solution1');
+            $consigne = $request->request->get('consigne');
             $exo->initExercice($value, $consigne, $manager);
+            
+            for ($solu = 2; $solu<=$nb_solution; $solu++) {
+                $exo->parseSolution($request->request->get('solution'.$solu), $manager);
+            }
+
 
             $manager->persist($exo);
             $cour->addExercice($exo);
@@ -149,11 +154,15 @@ class WebController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $repo = $this->getDoctrine()->getRepository(Cours::class);
+            $nb_solution = $request->request->get('count_sol');
 
-            $value = $request->request->get('value');
+            $value = $request->request->get('solution1');
             $consigne = $request->request->get('consigne');
+            $exercice->initExercice($value, $consigne, $manager);
             
-            $exercice->initExercice($value, $consigne);
+            for ($solu = 2; $solu<=$nb_solution; $solu++) {
+                $exercice->parseSolution($request->request->get('solution'.$solu), $manager);
+            }
 
             $manager->persist($exercice);
             $cour = $repo->find($id);
