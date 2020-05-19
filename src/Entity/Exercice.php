@@ -151,7 +151,7 @@ class Exercice
         $values = str_replace("\r", "", $solutionRaw);
         $values = str_replace("\t", "    ", $values);
 
-        preg_match_all('/^(?<spaces> *)(?<text>[^ ].*)$/m', $values, $matches);
+        preg_match_all('/^(?<spaces> *)(?<text>[\S].*)$/m', $values, $matches);
 
         $result = $matches['spaces'];
         $values = $matches['text'];
