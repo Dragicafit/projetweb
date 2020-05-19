@@ -40,10 +40,8 @@
             solution</button>
         <br>
         <br>
-        <fieldset>
-            {{ form_widget(formCour.next) }}
-            {{ form_widget(formCour.save) }}
-        </fieldset>
+        {{ form_widget(formCour.save) }}
+        {{ form_widget(formCour.next) }}
     </div>
     <input type="number" id="count_sol" value="1" hidden>
     {{ form_end(formCour ) }}
@@ -58,7 +56,7 @@
         nb_solution++;
         let row = document.createElement('div');
         row.setAttribute('class', 'row');
-        row.setAttribute('id', 'solution' + nb_solution);
+        row.setAttribute('id', 'solution_' + nb_solution);
         row.setAttribute('style', 'margin-top:10px;');
         let col = document.createElement('div');
         col.setAttribute('class', 'col-7');
