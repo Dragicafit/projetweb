@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Cours;
 use App\Entity\Exercice;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -31,13 +32,29 @@ class WebController extends AbstractController
         return $this->render('web/home.html.twig', ['liste_cours'=>$cours]);
     }
 
+    public function newExo($request, EntityManagerInterface $manager, $cour, $exercice)
+    {
+        $nb_solution = $request->get('count_sol');
+        $value = $request->get('solution1');
+        $consigne = $request->get('consigne');
+        $exercice->initExercice($value, $consigne, $manager);
+            
+        for ($solu = 2; $solu<=$nb_solution; $solu++) {
+            $exercice->parseSolution($request->get('solution'.$solu), $manager);
+        }
+        $manager->persist($exercice);
+        $cour->addExercice($exercice);
+        $manager->persist($cour);
+        $manager->flush();
+    }
+
     /**
      * @Route("/cour/create", name="createCour")
      */
     public function create_cour(Request $request, EntityManagerInterface $manager, UserInterface $user)
     {
         $cour = new Cours();
-        $exo = new Exercice();
+        $exercice = new Exercice();
 
         $form = $this->createFormBuilder($cour)
                     ->add(
@@ -48,40 +65,23 @@ class WebController extends AbstractController
                         ]
                     ]
                     )
-                    ->add('next', SubmitType::class, ['label'=>'Ajouter un exercice', 'attr'=>['class'=>'btn btn-primary pull-right']])
+                    ->add('next', SubmitType::class, ['label'=>'Ajouter un exercice', 'attr'=>['class'=>'btn btn-primary']])
                     ->getForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $repo = $manager->getRepository(Cours::class);
+
             $cour->setTitle($request->request->get('titre'))
                 ->setAuteur($user->getUsername())
                 ->setTemps($request->request->get('temps'));
-            
-            $manager->persist($cour);
-            $manager->flush();
-            $nb_solution = $request->request->get('count_sol');
-            
-            $value = $request->request->get('solution1');
-            $consigne = $request->request->get('consigne');
-            $exo->initExercice($value, $consigne, $manager);
-            
-            for ($solu = 2; $solu<=$nb_solution; $solu++) {
-                $exo->parseSolution($request->request->get('solution'.$solu), $manager);
-            }
 
-
-            $manager->persist($exo);
-            $cour->addExercice($exo);
-            $manager->persist($exo);
-            $manager->flush();
-
+            $this->newExo($request->request, $manager, $cour, $exercice);
             if ($form->get('save')->isClicked()) {
                 return $this->redirectToRoute('home');
             } else {
                 return $this->redirectToRoute('add_exo', ['id' => $cour->getId()]);
-                //return $this->render('web/newExercice.html.twig', ['userid'=>$cour->getId()]);
             }
-            return $this->redirectToRoute('home');
         }
         return $this->render('web/createCour.html.twig', ['formCour'=>$form->createView()]);
     }
@@ -152,31 +152,18 @@ class WebController extends AbstractController
                     ->add('next', SubmitType::class, ['label'=>'Ajouter un exercice', 'attr'=>['class'=>'btn btn-primary pull-right']])
                     ->getForm();
         $form->handleRequest($request);
+        print_r($form->isSubmitted());
         if ($form->isSubmitted() && $form->isValid()) {
             $repo = $manager->getRepository(Cours::class);
-            $nb_solution = $request->request->get('count_sol');
-
-            $value = $request->request->get('solution1');
-            $consigne = $request->request->get('consigne');
-            $exercice->initExercice($value, $consigne, $manager);
-            
-            for ($solu = 2; $solu<=$nb_solution; $solu++) {
-                $exercice->parseSolution($request->request->get('solution'.$solu), $manager);
-            }
-
-            $manager->persist($exercice);
             $cour = $repo->find($id);
-            $cour->addExercice($exercice);
-            $manager->persist($cour);
-            $manager->flush();
+            $this->newExo($request->request, $manager, $cour, $exercice);
             if ($form->get('save')->isClicked()) {
                 return $this->redirectToRoute('home');
             } else {
                 return $this->redirectToRoute('add_exo', ['id' => $cour->getId()]);
-                //return $this->render('web/newExercice.html.twig', ['userid'=>$cour->getId()]);
             }
         }
-        return $this->render('web/newExercice.html.twig', ['formExo'=>$form->createView()]);
+        return $this->render('web/newExercice.html.twig', ['formExo'=>$form->createView(), 'c_id'=>$id]);
     }
     
     /**
