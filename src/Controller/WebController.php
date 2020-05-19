@@ -63,7 +63,7 @@ class WebController extends AbstractController
             $manager->persist($cour);
             $manager->flush();
 
-            $exercice->initExercice($value, $consigne);
+            $exo->initExercice($value, $consigne, $manager);
 
             $manager->persist($exo);
             $cour->addExercice($exo);
