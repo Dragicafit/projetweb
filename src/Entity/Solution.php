@@ -41,7 +41,7 @@ class Solution
 
         foreach ($values as $key => $value) {
             $ligne = Ligne::initLigne($value, $manager);
-            $exo->addLigne($ligne);
+            $ligne->addExercice($exo);
             $lignes[$key] = $ligne;
             $manager->flush();
         }
