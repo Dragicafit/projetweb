@@ -17,11 +17,9 @@ class SecurityController extends AbstractController
     /**
      * @Route("/register", name="security_inscription")
      */
-    public function registration(Request $request, UserPasswordEncoderInterface $encoder)
+    public function registration(Request $request, UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager)
     {
         $user = new User();
-
-        $entityManager = $this->getDoctrine()->getManager();
 
         $form = $this->createForm(RegistrationType::class, $user);
 
@@ -30,8 +28,8 @@ class SecurityController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $hash = $encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($hash);
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $manager->persist($user);
+            $manager->flush();
 
             return $this->redirectToRoute('security_login');
         }
