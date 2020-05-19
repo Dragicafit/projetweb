@@ -48,8 +48,8 @@ class Exercice
 
     public function initExercice(string $solutionRaw, string $consigne, EntityManagerInterface $manager)
     {
-        $this->setConsigne($consigne)->parseSolution($solutionRaw, $manager);
         $manager->persist($this);
+        $this->setConsigne($consigne)->parseSolution($solutionRaw, $manager);
 
         return $this;
     }

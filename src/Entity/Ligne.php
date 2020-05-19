@@ -114,7 +114,7 @@ class Ligne
         return $this->exercices;
     }
 
-    public function addIdExercice(Exercice $Exercice): self
+    public function addExercice(Exercice $Exercice): self
     {
         if (!$this->exercices->contains($Exercice)) {
             $this->exercices[] = $Exercice;
@@ -124,7 +124,7 @@ class Ligne
         return $this;
     }
 
-    public function removeIdExercice(Exercice $Exercice): self
+    public function removeExercice(Exercice $Exercice): self
     {
         if ($this->exercices->contains($Exercice)) {
             $this->exercices->removeElement($Exercice);

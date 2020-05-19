@@ -22,6 +22,8 @@ class CoursFixtures extends Fixture implements DependentFixtureInterface
             $cour->setTitle("Boucle While ($i)")
                 ->setAuteur($repo->findOneBy(['username' => "UserP"]))
                 ->setTemps(15);
+            $manager->persist($cour);
+
             for ($j = 1; $j<=5; $j++) {
                 $exo = new Exercice();
 
@@ -32,11 +34,9 @@ class CoursFixtures extends Fixture implements DependentFixtureInterface
                 for ($k = 0; $k<5;$k++) {
                     $value.=" Ligne $k\n";
                 }
+                $cour->addExercice($exo);
 
                 $exo->initExercice($value, "Test des consignes", $manager);
-
-                $cour->addExercice($exo);
-                $manager->persist($cour);
             }
         }
         $manager->flush();

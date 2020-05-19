@@ -37,14 +37,12 @@ class WebController extends AbstractController
         $nb_solution = $request->get('count_sol');
         $value = $request->get('solution1');
         $consigne = $request->get('consigne');
+        $cour->addExercice($exercice);
         $exercice->initExercice($value, $consigne, $manager);
             
         for ($solu = 2; $solu<=$nb_solution; $solu++) {
             $exercice->parseSolution($request->get('solution'.$solu), $manager);
         }
-        $manager->persist($exercice);
-        $cour->addExercice($exercice);
-        $manager->persist($cour);
         $manager->flush();
         if ($form->get('save')->isClicked()) {
             return $this->redirectToRoute('home');
@@ -77,6 +75,8 @@ class WebController extends AbstractController
             $cour->setTitle($request->request->get('titre'))
                 ->setAuteur($user)
                 ->setTemps($request->request->get('temps'));
+            $manager->persist($cour);
+            $manager->flush();
 
             return $this->newExo($request->request, $manager, $cour, $exercice, $form);
         }
@@ -102,12 +102,10 @@ class WebController extends AbstractController
         $exo = $cour->getExercices();
         if ($exo_id==0) {
             $user->addCoursEleve($cour);
-            $manager->persist($user);
         }
 
         if ($exo_id >= sizeof($exo)) {
             $user->addDone($cour);
-            $manager->persist($cour);
             $manager->flush();
             return $this->render('web/finexo.html.twig');
         }
