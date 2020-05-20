@@ -70,11 +70,17 @@ class User implements UserInterface
      */
     private $cours_prof;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ExoUser", mappedBy="eleve", orphanRemoval=true)
+     */
+    private $eleve_exo;
+
     public function __construct()
     {
         $this->Done = new ArrayCollection();
         $this->cours_eleve = new ArrayCollection();
         $this->cours_prof = new ArrayCollection();
+        $this->eleve_exo = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -218,6 +224,37 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($coursProf->getAuteur() === $this) {
                 $coursProf->setAuteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ExoUser[]
+     */
+    public function getEleveExo(): Collection
+    {
+        return $this->eleve_exo;
+    }
+
+    public function addEleveExo(ExoUser $eleveExo): self
+    {
+        if (!$this->eleve_exo->contains($eleveExo)) {
+            $this->eleve_exo[] = $eleveExo;
+            $eleveExo->setEleve($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEleveExo(ExoUser $eleveExo): self
+    {
+        if ($this->eleve_exo->contains($eleveExo)) {
+            $this->eleve_exo->removeElement($eleveExo);
+            // set the owning side to null (unless already changed)
+            if ($eleveExo->getEleve() === $this) {
+                $eleveExo->setEleve(null);
             }
         }
 

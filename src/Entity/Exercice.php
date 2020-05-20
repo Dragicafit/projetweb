@@ -46,6 +46,11 @@ class Exercice
      */
     private $ligne;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ExoUser", mappedBy="exercice", orphanRemoval=true)
+     */
+    private $exoUsers;
+
     public function initExercice(string $solutionRaw, string $consigne, EntityManagerInterface $manager)
     {
         $manager->persist($this);
@@ -58,6 +63,7 @@ class Exercice
     {
         $this->solution = new ArrayCollection();
         $this->ligne = new ArrayCollection();
+        $this->exoUsers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -166,6 +172,37 @@ class Exercice
 
         $solution = Solution::initSolution($values, $count, $convert, $this, $manager);
         $this->addSolution($solution);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ExoUser[]
+     */
+    public function getExoUsers(): Collection
+    {
+        return $this->exoUsers;
+    }
+
+    public function addExoUser(ExoUser $exoUser): self
+    {
+        if (!$this->exoUsers->contains($exoUser)) {
+            $this->exoUsers[] = $exoUser;
+            $exoUser->setExercice($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExoUser(ExoUser $exoUser): self
+    {
+        if ($this->exoUsers->contains($exoUser)) {
+            $this->exoUsers->removeElement($exoUser);
+            // set the owning side to null (unless already changed)
+            if ($exoUser->getExercice() === $this) {
+                $exoUser->setExercice(null);
+            }
+        }
 
         return $this;
     }

@@ -44,7 +44,7 @@
         {{ form_widget(formCour.save) }}
         {{ form_widget(formCour.next) }}
     </div>
-    <input type="number" id="count_sol" name="count_sol" value="1" hidden>
+    <input type="number" name="count_sol" value="1" hidden>
     {{ form_end(formCour ) }}
 </div>
 
@@ -74,7 +74,7 @@
         field.appendChild(h);
         col.appendChild(field);
         row.appendChild(col);
-        document.getElementById("count_sol").setAttribute('value', nb_solution);
+        document.getElementsByName("count_sol").setAttribute('value', nb_solution);
         let elem = document.getElementById("solution_" + (nb_solution - 1));
         console.log(nb_solution);
         elem.after(row);

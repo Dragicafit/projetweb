@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Cours;
+use App\Entity\ExoUser;
 use App\Entity\Exercice;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -55,6 +56,9 @@ class WebController extends AbstractController
      */
     public function create_cour(Request $request, EntityManagerInterface $manager, UserInterface $user)
     {
+        if (!$user->getProf()) {
+            throw $this->createNotFoundException('Vous ne devriez pas être ici !');
+        }
         $cour = new Cours();
         $exercice = new Exercice();
 
@@ -97,15 +101,23 @@ class WebController extends AbstractController
     public function show_next($id, $exo_id, UserInterface $user, EntityManagerInterface $manager)
     {
         $repo = $manager->getRepository(Cours::class);
-
         $cour = $repo->find($id);
         $exo = $cour->getExercices();
+        $cour->addEleve($user);
+        /* A mettre dans la route ajax */
+        if ($exo_id < sizeof($exo)) {
+            $exo_user = new ExoUser();
+            $exo_user->setEleve($user);
+            $exo_user->setExercice($exo[$exo_id]);
+            $exo_user->setNbErreur(0);
+            $manager->persist($exo_user);
+        }
+        /* Suite */
         if ($exo_id==0) {
             $user->addCoursEleve($cour);
         }
-
         if ($exo_id >= sizeof($exo)) {
-            $user->addDone($cour);
+            /* Gerer la reussite de l'exo */
             $manager->flush();
             return $this->render('web/finexo.html.twig');
         }
@@ -116,7 +128,7 @@ class WebController extends AbstractController
     }
 
     /**
-     * @Route("/mescours", name="mes_cours")
+     * @Route("/mescours/prof", name="mes_cours")
      */
     public function my_cours(UserInterface $user, EntityManagerInterface $manager)
     {
@@ -127,8 +139,19 @@ class WebController extends AbstractController
     /**
      * @Route("/newExo/{id}", name="add_exo")
      */
-    public function add_exo(Request $request, EntityManagerInterface $manager, $id)
+    public function add_exo(UserInterface $user, Request $request, EntityManagerInterface $manager, $id)
     {
+        if (!$user->getProf()) {
+            throw $this->createNotFoundException('Vous ne devriez pas être ici !');
+        }
+        $c = $manager->getRepository(Cours::class)->find($id);
+        if (is_null($c)) {
+            throw $this->createNotFoundException('Vous voulez aller trop vite !');
+        }
+        if ($c->getAuteur() != $user) {
+            throw $this->createNotFoundException('Vous ne devriez pas être ici !');
+        }
+        
         $exercice = new Exercice();
 
         $form = $this->createFormBuilder($exercice)
