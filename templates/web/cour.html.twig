@@ -25,11 +25,9 @@
 
     .facet-list {
         list-style-type: none;
-        margin: 0;
-        padding: 0;
-        margin-right: 10px;
-        background: #eee;
+        margin: 0 10px 0 0;
         padding: 5px;
+        background: #eee;
         min-height: 1.5em;
         font-size: 0.85em;
     }
@@ -41,7 +39,7 @@
     }
 
     .facet-list li.placeholder {
-        height: 1.2em
+        height: 1.2em;
     }
 
     .facet {
@@ -77,148 +75,159 @@
         Bienvenue sur le cour :
         {{ cour.title }}
     </h1>
-    <h4 style="text-align: center;"> Auteur: {{ cour.auteur.username }} </h4>
+    <h4 style="text-align: center;">
+        Auteur:
+        {{ cour.auteur.username }}
+    </h4>
 </div>
 <div class="container">
-    <form action="/cours/{{c_id}}/exo/{{e_id +1}}">
+    <form action="/cours/{{cour_id}}/exo/{{cour_exo_id +1}}">
         <div class="row" style="margin: 10px;">
             <div class="col-6">
                 <div>
-                    <h3>Exercice {{e_id+1}} :</h3>
-                    <h4>{{cons}} </h4>
+                    <h3>
+                        Exercice {{cour_exo_id+1}} :
+                    </h3>
+                    <h4>
+                        {{cons}}
+                    </h4>
                 </div>
             </div>
             <div class="col-6">
                 <div>
-                    <h3 id="att_hidden">Remplir ici :</h3>
+                    <h3 id="att_hidden">
+                        Remplir ici :
+                    </h3>
                 </div>
             </div>
         </div>
         <div class="row" style="margin: 10px;">
             <div class="col-6" id="col-exo">
-                <div style="border: solid 1px gray; padding: 20px;" id="foo">
-                </div>
+                <div style="border: solid 1px gray; padding: 20px;" id="foo"></div>
             </div>
             <div class="col-6" id="res_hidden">
                 <div style="border: solid 1px gray; padding: 20px;" id="foo">
-                    <ul id="userFacets" class="facet-list">
-                    </ul>
+                    <ul id="userFacets" class="facet-list"></ul>
                 </div>
             </div>
         </div>
-        <p style="text-align: center;"><button type="button" onclick="send_value()"
-                style="text-align: center;">Verifier</button>
-            <button type="submit" id="btn_sub" hidden>Suivant</button></p>
-        <input type="text" name="c_id" value="{{ c_id }}" hidden>
-        <input type="text" name="exo_id" value="{{ e_id }}" hidden>
+        <p style="text-align: center;">
+            <button type="button" onclick="send_value()" style="text-align: center;">
+                Verifier
+            </button>
+            <button type="submit" id="btn_sub" hidden>
+                Suivant
+            </button>
+        </p>
+        <input type="text" name="cour_id" value="{{ cour_id }}" hidden>
+
+        <input type="text" name="cour_exo_id" value="{{ cour_exo_id }}" hidden>
+
+
     </form>
 </div>
 {# {% endfor %} #}
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
-    //Test
-    var options = [];
+    // Test
+    var list_ligne = [];
     {% for l in exo %}
-    options.push("{{ l.text }}");
+    list_ligne.push({ ligne_id: {{ l.id }}, text: "{{ l.text }}", tab: 0});
     {% endfor %}
-    console.log(options);
-    //console.log(result);
+    console.log(list_ligne);
+    // console.log(result);
 
-    function makeUL(options, val) {
+    function makeUL(val) {
         var form = document.createElement('form');
         form.setAttribute('id', 'form');
         // Create the list element:
         var list = document.createElement('ul');
         list.setAttribute('id', 'allFacets');
         list.setAttribute('class', 'facet-list');
-        for (var i = 0; i < options.length; i++) {
+        for (var i = 0; i < list_ligne.length; i++) {
             // Create the list item:
             var item = document.createElement('li');
             item.setAttribute('class', 'facet');
             item.setAttribute('id', 'li_' + i);
+            item.setAttribute('value', i);
             var btnPlus = document.createElement("BUTTON");
             btnPlus.setAttribute('type', 'button');
             btnPlus.setAttribute('style', 'float:right;');
 
-            btnPlus.setAttribute('onclick', 'add_indent(pad' + i + ',li_' + i + ',true)');
+            btnPlus.setAttribute('onclick', 'add_indent(' + i + ',true)');
             btnPlus.appendChild(document.createTextNode("+"));
             var btnMoins = document.createElement("BUTTON");
             btnMoins.setAttribute('type', 'button');
             btnMoins.setAttribute('style', 'float:right;');
 
-            btnMoins.setAttribute('onclick', 'add_indent(pad' + i + ',li_' + i + ',false)');
+            btnMoins.setAttribute('onclick', 'add_indent(' + i + ' ,false)');
             btnMoins.appendChild(document.createTextNode("-"));
-            var pad = document.createElement('input');
-            pad.setAttribute('type', 'number');
-            pad.setAttribute('hidden', 'true');
-            pad.setAttribute('id', 'pad' + i);
-            pad.setAttribute('value', '0');
 
             // Set its contents:
-            item.appendChild(document.createTextNode(options[i]));
+            item.appendChild(document.createTextNode(list_ligne[i].text));
             // Add au li:
             item.appendChild(btnPlus);
             item.appendChild(btnMoins);
-            item.appendChild(pad);
             list.appendChild(item);
         }
         form.appendChild(list);
         return form;
     }
-    document.getElementById('foo').appendChild(makeUL(options, 'exo'));
+    document.getElementById('foo').appendChild(makeUL('exo'));
 
-    function add_indent(num, l, plus) {
-        console.log(plus);
+    function add_indent(i, plus) {
         if (plus) {
-            if (num.value < 10) {
-                num.value++;
-                var n = num.value * 10;
-                l.style = "padding-left:" + n + "px";
+            if (list_ligne[i].tab < 10) {
+                list_ligne[i].tab++;
+                var n = list_ligne[i].tab * 50;
+                $('#li_' + i).css("padding-left", n + "px");
             }
         } else {
-            if (num.value > 1) {
-                num.value--;
-                var n = num.value * 10;
-                l.style = "padding-left:" + n + "px";
+            if (list_ligne[i].tab > 1) {
+                list_ligne[i].tab--;
+                var n = list_ligne[i].tab * 50;
+                $('#li_' + i).css("padding-left", n + "px");
             } else {
-                num.value = 0;
-                l.style = "";
+                list_ligne[i].tab = 0;
+                $('#li_' + i).css("padding-left", "");
             }
         }
-        console.log(num.value);
-
     }
 
     function rebuild_option() {
         var array = [];
-        var list = $("#userFacets");
-        for (var i = 0; i < list.length; i++) {
-            array.push(list[i].textContent);
+        var res = $("#userFacets").children();
+        for (let i = 0; i < res.length; i++) {
+            let ligne = list_ligne[res[i].value];
+            array.push({ ligne_id: ligne.ligne_id, nb_tab: ligne.tab });
         }
         return array;
     }
 
-    function is_same(arr, array) {
-        if (arr.length == array.length) {
-            for (var i = 0; i < options.length; i++) {
-                if (arr[i] != array[i]) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
     function send_value() {
-        /*         var val = rebuild_option();
-                if (is_same(val, result)) {
+        var val = rebuild_option();
+        $.ajax({
+            url: '/verif/exo/{{exo_id}}',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                rep: val
+            },
+            async: true,
+
+            success: function (data, status) {
+                if (data) {
                     document.getElementById('btn_sub').hidden = false;
                 } else {
                     document.getElementById('btn_sub').hidden = true;
                     alert('Encore un effort, c\'est presque bon !');
-                } */
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Ajax request failed.');
+            }
+        });
     }
 
     $(function () {

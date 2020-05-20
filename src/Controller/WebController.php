@@ -11,9 +11,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType ;
@@ -88,43 +89,80 @@ class WebController extends AbstractController
     }
 
     /**
-     * @Route("/cours/{id}", name="cour_view")
+     * @Route("/cours/{cour_id}", name="cour_view")
      */
-    public function show($id)
+    public function show($cour_id)
     {
-        return $this->redirectToRoute('cour_exo', ['id' => $id, 'exo_id' => 0]);
+        return $this->redirectToRoute('cour_exo', ['cour_id' => $cour_id, 'cour_exo_id' => 0]);
     }
 
     /**
-     * @Route("cours/{id}/exo/{exo_id}", name="cour_exo")
+     * @Route("cours/{cour_id}/exo/{cour_exo_id}", name="cour_exo")
      */
-    public function show_next($id, $exo_id, UserInterface $user, EntityManagerInterface $manager)
+    public function show_next($cour_id, $cour_exo_id, UserInterface $user, EntityManagerInterface $manager)
     {
         $repo = $manager->getRepository(Cours::class);
-        $cour = $repo->find($id);
+        $cour = $repo->find($cour_id);
         $exo = $cour->getExercices();
         $cour->addEleve($user);
         /* A mettre dans la route ajax */
-        if ($exo_id < sizeof($exo)) {
+        if ($cour_exo_id < sizeof($exo)) {
             $exo_user = new ExoUser();
             $exo_user->setEleve($user);
-            $exo_user->setExercice($exo[$exo_id]);
+            $exo_user->setExercice($exo[$cour_exo_id]);
             $exo_user->setNbErreur(0);
             $manager->persist($exo_user);
         }
         /* Suite */
-        if ($exo_id==0) {
+        if ($cour_exo_id==0) {
             $user->addCoursEleve($cour);
         }
-        if ($exo_id >= sizeof($exo)) {
+        if ($cour_exo_id >= sizeof($exo)) {
             /* Gerer la reussite de l'exo */
             $manager->flush();
             return $this->render('web/finexo.html.twig');
         }
         $manager->flush();
-        $val = $exo[$exo_id]->getLigne();
-        $cons = $exo[$exo_id]->getConsigne();
-        return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$val, 'c_id'=> $id, 'e_id'=> $exo_id, 'cons'=>$cons]);
+        $val = $exo[$cour_exo_id]->getLigne();
+        $cons = $exo[$cour_exo_id]->getConsigne();
+        $exo_id = $exo[$cour_exo_id]->getId();
+
+        return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$val, 'cour_id'=> $cour_id, 'cour_exo_id'=> $cour_exo_id, 'exo_id'=> $exo_id, 'cons'=>$cons]);
+    }
+
+    /**
+     * @Route("/verif/exo/{exo_id}", name="verif")
+     */
+    public function verif($exo_id, Request $request, UserInterface $user, EntityManagerInterface $manager)
+    {
+        if (!$request->isXmlHttpRequest()) {
+            throw $this->createNotFoundException('The product does not exist');
+        }
+
+        $repo = $manager->getRepository(Exercice::class);
+        $exercice = $repo->find($exo_id);
+        $solutions = $exercice->getSolution();
+
+        if ($solutions === null) {
+            throw $this->createNotFoundException('The product does not exist');
+        }
+
+        $rep=$request->request->get('rep', []);
+
+
+        foreach ($solutions as $solution) {
+            $tab = $solution->getTab();
+            sizeof($rep);
+            if (sizeof($tab) == sizeof($rep)) {
+                for ($i = 0; $i < sizeof($tab); $i++) {
+                    if ($tab[$i]->getNbTab() != $rep[$i]['nb_tab'] || $tab[$i]->getLigne()->getId() != $rep[$i]['ligne_id']) {
+                        continue 2;
+                    }
+                }
+                return new JsonResponse(true);
+            }
+        }
+        return new JsonResponse(false);
     }
 
     /**
@@ -151,7 +189,7 @@ class WebController extends AbstractController
         if ($c->getAuteur() != $user) {
             throw $this->createNotFoundException('Vous ne devriez pas être ici !');
         }
-        
+
         $exercice = new Exercice();
 
         $form = $this->createFormBuilder($exercice)
