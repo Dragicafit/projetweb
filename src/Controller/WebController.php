@@ -104,22 +104,42 @@ class WebController extends AbstractController
     {
         $repo = $manager->getRepository(Cours::class);
         $cour = $repo->find($cour_id);
-        $exo = $cour->getExercices();
+        $exos = $cour->getExercices();
         $cour->addEleve($user);
         if ($cour_exo_id==0) {
             $user->addCoursEleve($cour);
         }
-        if ($cour_exo_id >= sizeof($exo)) {
+        if ($cour_exo_id >= sizeof($exos)) {
             /* Gerer la reussite de l'exo */
             $manager->flush();
             return $this->render('web/finexo.html.twig');
         }
-        $val = $exo[$cour_exo_id]->getLigne();
-        $cons = $exo[$cour_exo_id]->getConsigne();
-        $exo_id = $exo[$cour_exo_id]->getId();
+        $exo =$exos[$cour_exo_id];
+        $lignes = $exo->getLigne();
+        $solutions = $exo->getSolution();
+        $lignes_solutions = [];
+        foreach ($lignes as $ligne) {
+            $count = 0;
+            foreach ($solutions as $solution) {
+                $count_on_solution = 0;
+                foreach ($solution->getTab() as $tab) {
+                    if ($tab->getLigne() == $ligne) {
+                        $count_on_solution ++;
+                    }
+                }
+                $count = max($count, $count_on_solution);
+            }
+            for ($i = 0; $i<max(1, $count);$i++) {
+                $lignes_solutions[]=$ligne;
+            }
+        }
+        $cons = $exo->getConsigne();
+
+        $exo_id = $exo->getId();
+        shuffle($lignes_solutions);
         $manager->flush();
 
-        return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$val, 'cour_id'=> $cour_id, 'cour_exo_id'=> $cour_exo_id, 'exo_id'=> $exo_id, 'cons'=>$cons]);
+        return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$lignes_solutions, 'cour_id'=> $cour_id, 'cour_exo_id'=> $cour_exo_id, 'exo_id'=> $exo_id, 'cons'=>$cons]);
     }
 
     /**
