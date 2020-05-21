@@ -105,15 +105,6 @@ class WebController extends AbstractController
         $cour = $repo->find($cour_id);
         $exo = $cour->getExercices();
         $cour->addEleve($user);
-        /* A mettre dans la route ajax */
-        if ($cour_exo_id < sizeof($exo)) {
-            $exo_user = new ExoUser();
-            $exo_user->setEleve($user);
-            $exo_user->setExercice($exo[$cour_exo_id]);
-            $exo_user->setNbErreur(0);
-            $manager->persist($exo_user);
-        }
-        /* Suite */
         if ($cour_exo_id==0) {
             $user->addCoursEleve($cour);
         }
@@ -122,10 +113,10 @@ class WebController extends AbstractController
             $manager->flush();
             return $this->render('web/finexo.html.twig');
         }
-        $manager->flush();
         $val = $exo[$cour_exo_id]->getLigne();
         $cons = $exo[$cour_exo_id]->getConsigne();
         $exo_id = $exo[$cour_exo_id]->getId();
+        $manager->flush();
 
         return $this->render('web/cour.html.twig', ['cour'=>$cour, 'exo'=>$val, 'cour_id'=> $cour_id, 'cour_exo_id'=> $cour_exo_id, 'exo_id'=> $exo_id, 'cons'=>$cons]);
     }
@@ -141,6 +132,9 @@ class WebController extends AbstractController
 
         $repo = $manager->getRepository(Exercice::class);
         $exercice = $repo->find($exo_id);
+        if ($exercice === null) {
+            throw $this->createNotFoundException('The product does not exist');
+        }
         $solutions = $exercice->getSolution();
 
         if ($solutions === null) {
@@ -149,16 +143,22 @@ class WebController extends AbstractController
 
         $rep=$request->request->get('rep', []);
 
+        $erreur = 0;
 
         foreach ($solutions as $solution) {
             $tab = $solution->getTab();
-            sizeof($rep);
             if (sizeof($tab) == sizeof($rep)) {
                 for ($i = 0; $i < sizeof($tab); $i++) {
                     if ($tab[$i]->getNbTab() != $rep[$i]['nb_tab'] || $tab[$i]->getLigne()->getId() != $rep[$i]['ligne_id']) {
                         continue 2;
                     }
                 }
+                $exo_user = new ExoUser();
+                $exo_user->setEleve($user);
+                $exo_user->setExercice($exercice);
+                $exo_user->setNbErreur($erreur);
+                $manager->persist($exo_user);
+                $manager->flush();
                 return new JsonResponse(true);
             }
         }
@@ -166,10 +166,14 @@ class WebController extends AbstractController
     }
 
     /**
-     * @Route("/mescours/prof", name="mes_cours")
+     * @Route("/mescours", name="mes_cours")
      */
     public function my_cours(UserInterface $user, EntityManagerInterface $manager)
     {
+        if (!$user->getProf()) {
+            $cours = $user->getCoursEleve();
+            return $this->render('web/myCours.html.twig', ['liste_cours'=>$cours]);
+        }
         $cours = $user->getCoursProf();
         return $this->render('web/home.html.twig', ['liste_cours'=>$cours]);
     }
@@ -213,6 +217,46 @@ class WebController extends AbstractController
         }
         return $this->render('web/newExercice.html.twig', ['formExo'=>$form->createView()]);
     }
+
+    /**
+     * @Route("/result/user", name="user_result")
+     */
+    public function user_result(EntityManagerInterface $manager, Request $request)
+    {
+        if (!$request->isXmlHttpRequest()) {
+            throw $this->createNotFoundException('The request does not exist');
+        }
+        $type = $request->request->get('type');
+        $repo = $manager->getRepository(User::class);
+        $cour_id = $request->request->get('cour');
+        $user_id = $request->request->get('user');
+        $user = $repo->find($user_id);
+        if ($user === null) {
+            throw $this->createNotFoundException('The request does not exist');
+        }
+        $user_exo = $user->getEleveExo();
+        if ($user_exo === null) {
+            throw $this->createNotFoundException('The request does not exist');
+        }
+        if ($type == -1) {
+            $note = 0;
+            foreach ($user_exo as $eleve_exo) {
+                if ($eleve_exo->getExercice()->getCour()->getId() == $cour_id) {
+                    /* Voir comment on calcul le taux de réussite */
+                    $note+= $eleve_exo->getNbErreur();
+                }
+            }
+            return new JsonResponse($note);
+        }
+        $exo_id = $request->request->get('exo');
+        foreach ($user_exo as $eleve_exo) {
+            if ($eleve_exo->getExercice()->getId() == $exo_id) {
+                /* A voir ce qu'on affiche */
+                return new JsonResponse($eleve_exo->getNbErreur());
+            }
+        }
+        return new JsonResponse("---");
+    }
     
     /**
      * @Route("/exo_list/{id}", name="exo_cours")
@@ -222,6 +266,6 @@ class WebController extends AbstractController
         $repo_cour = $manager->getRepository(Cours::class);
         $cour = $repo_cour->find($id);
         $exos = $cour->getExercices();
-        return $this->render('web/pageExo.html.twig', ['exos'=>$exos]);
+        return $this->render('web/pageExo.html.twig', ['exos'=>$exos, 'cour_id' => $id]);
     }
 }

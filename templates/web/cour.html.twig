@@ -129,15 +129,13 @@
 {# {% endfor %} #}
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script>
-    // Test
+<script type="text/javascript" src="/js/ajax.js"></script>
+
+<script type="text/javascript">
     var list_ligne = [];
     {% for l in exo %}
     list_ligne.push({ ligne_id: {{ l.id }}, text: "{{ l.text }}", tab: 0});
     {% endfor %}
-    console.log(list_ligne);
-    // console.log(result);
-
     function makeUL(val) {
         var form = document.createElement('form');
         form.setAttribute('id', 'form');
@@ -175,7 +173,6 @@
         return form;
     }
     document.getElementById('foo').appendChild(makeUL('exo'));
-
     function add_indent(i, plus) {
         if (plus) {
             if (list_ligne[i].tab < 10) {

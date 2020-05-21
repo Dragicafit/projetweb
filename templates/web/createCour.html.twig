@@ -1,7 +1,5 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-{% if app.user.prof %}
-
 <div class="container">
     {{ form_start(formCour) }}
     <div class="container">
@@ -44,48 +42,14 @@
         {{ form_widget(formCour.save) }}
         {{ form_widget(formCour.next) }}
     </div>
-    <input type="number" name="count_sol" value="1" hidden>
+    <input type="number" id="count_sol" name="count_sol" value="1" hidden>
     {{ form_end(formCour ) }}
 </div>
 
 {% block script %}
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script>
-    var nb_solution = 1;
-    function new_solution() {
-        nb_solution++;
-        let row = document.createElement('div');
-        row.setAttribute('class', 'row');
-        row.setAttribute('id', 'solution_' + nb_solution);
-        row.setAttribute('style', 'margin-top:10px;');
-        let col = document.createElement('div');
-        col.setAttribute('class', 'col-7');
-        let field = document.createElement('fieldset');
-        let h = document.createElement('h5');
-        let area = document.createElement('textarea');
-        area.setAttribute('class', 'form-control');
-        area.setAttribute('rows', '5');
-        area.setAttribute('cols', '33');
-        area.setAttribute('name', 'solution' + nb_solution);
-        area.setAttribute('placeholder', 'Tapez votre code');
-        area.setAttribute('required', 'true');
-        h.appendChild(area);
-        field.appendChild(h);
-        col.appendChild(field);
-        row.appendChild(col);
-        document.getElementsByName("count_sol").setAttribute('value', nb_solution);
-        let elem = document.getElementById("solution_" + (nb_solution - 1));
-        console.log(nb_solution);
-        elem.after(row);
-    }
-</script>
+<script type="text/javascript" src="/js/createCour.js"></script>
 {% endblock %}
-
-{% else %}
-<div class="container">
-    <h1 style="text-align: center;"> 404 Not found </h1>
-</div>
-{% endif %}
 
 {% endblock %}

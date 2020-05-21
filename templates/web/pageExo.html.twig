@@ -4,7 +4,11 @@
 {% endblock %}
 
 {% block body %}
-	<table class="table">
+<h1 style="text-align: center; padding: 3% 0% 3% 0%">Vos exercices!</h1>
+
+<table class="table" style="margin-top: 10px; ;">
+	<thead class="thead-dark">
+
 		<tr>
 			<th scope="col">
 				N°
@@ -16,27 +20,43 @@
 				Exercices
 			</th>
 			<th scope="col">
-				Réussite
+				Eleves
+			</th>
+			<th scope="col">
+				Erreurs
 			</th>
 		</tr>
-		{% set i = 1 %}
-		{% for exo in exos %}
-			<tr>
-				<th>
-					{{ i }}
-					{% set i = i+1 %}
-				</th>
-				<th>
-					{{ exo.consigne }}
-				</th>
-				<th>
-					{% for l in exo.getLigne()[:4] %}
-						{{ l.text }}
-						<br/>
-					{% endfor %}
-				</th>
-				<th></th>
-			</tr>
-		{% endfor %}
-	</table>
+	</thead>
+	{% set i = 1 %}
+	{% for exo in exos %}
+	<tr>
+		<th>
+			{{ i }}
+			{% set i = i+1 %}
+		</th>
+		<th>
+			{{ exo.consigne }}
+		</th>
+		<th>
+			{% for l in exo.getLigne()[:4] %}
+			{{ l.text }}
+			<br />
+			{% endfor %}
+		</th>
+		<td><select onchange="get_user_note(this.value,{{cour_id}},{{exo.id}}, 0)">
+				<option value="-1">-- Choix --</option>
+				{% for exoUser in exo.getExoUsers() %}
+				{% set eleve = exoUser.getEleve() %}
+				<option value="{{ eleve.getId() }}">{{eleve.getUsername()}}</option>
+				{% endfor %}
+			</select></td>
+		<td id="note_{{cour_id}}">---</td>
+	</tr>
+	{% endfor %}
+</table>
+{% block script %}
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript" src="/js/ajax.js"></script>
+{% endblock %}
 {% endblock %}
