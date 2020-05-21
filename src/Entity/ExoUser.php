@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\User;
 use App\Entity\Exercice;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ExoUserRepository")
@@ -39,6 +40,11 @@ class ExoUser
      * @ORM\Column(type="boolean")
      */
     private $win;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $abandon;
 
     public static function initExoUser(User $user, Exercice $exercice, bool $win, EntityManagerInterface $manager)
     {
@@ -117,6 +123,18 @@ class ExoUser
     public function setWin(bool $win): self
     {
         $this->win = $win;
+
+        return $this;
+    }
+
+    public function getAbandon(): ?bool
+    {
+        return $this->abandon;
+    }
+
+    public function setAbandon(bool $abandon): self
+    {
+        $this->abandon = $abandon;
 
         return $this;
     }

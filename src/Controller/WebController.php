@@ -97,23 +97,75 @@ class WebController extends AbstractController
         return $this->redirectToRoute('cour_exo', ['cour_id' => $cour_id, 'cour_exo_id' => 0]);
     }
 
+
+    public function exo_precedent($cour_exo_id, $exos, UserInterface $user)
+    {
+        $exo_p = $cour_exo_id -1;
+        if ($exo_p < 0) {
+            throw $this->createNotFoundException('Introuvable');
+        }
+        $exo_pre = $exos[$exo_p];
+        $exo_users = $exo_pre -> getExoUsers();
+        foreach ($exo_users as $exo_user) {
+            if ($exo_user->getEleve() == $user && ($exo_user->getWin() || $exo_user->getAbandon())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+    * @Route("/abandon/exo/{exo_id}", name="abandon")
+    */
+    public function abandon($exo_id, Request $request, UserInterface $user, EntityManagerInterface $manager)
+    {
+        if (!$request->isXmlHttpRequest()) {
+            throw $this->createNotFoundException('The product does not exist');
+        }
+
+        $repo = $manager->getRepository(Exercice::class);
+        $exercice = $repo->find($exo_id);
+        if ($exercice === null) {
+            throw $this->createNotFoundException('The product does not exist');
+        }
+        $exo_user = ExoUser::initExoUser($user, $exercice, false, $manager);
+        $exo_user ->setAbandon(true);
+        $manager->flush();
+        return new JsonResponse();
+    }
+
     /**
      * @Route("cours/{cour_id}/exo/{cour_exo_id}", name="cour_exo")
      */
-    public function show_next($cour_id, $cour_exo_id, UserInterface $user, EntityManagerInterface $manager)
+    public function show_next($cour_id, $cour_exo_id, Request $request, UserInterface $user, EntityManagerInterface $manager)
     {
+        if ($cour_id < 0 || $cour_exo_id < 0) {
+            throw $this->createNotFoundException('Introuvable');
+        }
+
         $repo = $manager->getRepository(Cours::class);
         $cour = $repo->find($cour_id);
+        
+        if ($cour === null) {
+            throw $this->createNotFoundException('Introuvable');
+        }
+        
         $exos = $cour->getExercices();
         $cour->addEleve($user);
         if ($cour_exo_id==0) {
             $user->addCoursEleve($cour);
+        } else {
+            if (!$this->exo_precedent($cour_exo_id, $exos, $user)) {
+                throw $this->createNotFoundException('Introuvable');
+            }
         }
+
         if ($cour_exo_id >= sizeof($exos)) {
             /* Gerer la reussite de l'exo */
             $manager->flush();
             return $this->render('web/finexo.html.twig');
         }
+
         $exo =$exos[$cour_exo_id];
         $lignes = $exo->getLigne();
         $solutions = $exo->getSolution();
@@ -172,12 +224,12 @@ class WebController extends AbstractController
                         continue 2;
                     }
                 }
-                $exo_user = ExoUser::initExoUser($user, $exercice, 1, $manager);
+                $exo_user = ExoUser::initExoUser($user, $exercice, true, $manager);
                 $manager->flush();
                 return new JsonResponse(true);
             }
         }
-        $exo_user = ExoUser::initExoUser($user, $exercice, 0, $manager);
+        $exo_user = ExoUser::initExoUser($user, $exercice, false, $manager);
         $manager->flush();
         return new JsonResponse(false);
     }

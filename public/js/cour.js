@@ -76,12 +76,29 @@ function send_value() {
         async: true,
 
         success: function (data, status) {
-            if (data) {
-                document.getElementById('btn_sub').hidden = false;
-            } else {
-                document.getElementById('btn_sub').hidden = true;
-                alert('Encore un effort, c\'est presque bon !');
-            }
+            document.getElementById('btn_sub').hidden = !data;
+
+            document.getElementById('btn_surrend').hidden = data;
+            document.getElementById('btn_check').hidden = data;
+            if (!data) alert('Encore un effort, c\'est presque bon !');
+        },
+        error: function (xhr, textStatus, errorThrown) {
+            alert('Ajax request failed.');
+        }
+    });
+}
+
+function send_abandon() {
+    $.ajax({
+        url: '/abandon/exo/' + exo_id,
+        type: 'POST',
+        dataType: 'json',
+        async: true,
+
+        success: function (data, status) {
+            document.getElementById('btn_sub').hidden = false;
+            document.getElementById('btn_surrend').hidden = true;
+            document.getElementById('btn_check').hidden = true;
         },
         error: function (xhr, textStatus, errorThrown) {
             alert('Ajax request failed.');

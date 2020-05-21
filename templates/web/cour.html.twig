@@ -48,10 +48,15 @@
             </div>
         </div>
         <p style="text-align: center;">
-            <button type="button" onclick="send_value()" style="text-align: center;">
+            <button type="button" id="btn_check" class="btn btn-primary" onclick="send_value()"
+                style="text-align: center;">
                 Verifier
             </button>
-            <button type="submit" id="btn_sub" hidden>
+            <button type="button" class="btn btn-primary" onclick="send_abandon()" id="btn_surrend"
+                style="text-align: center;">
+                Abandonner
+            </button>
+            <button type="submit" class="btn btn-primary" id="btn_sub" hidden>
                 Suivant
             </button>
         </p>
