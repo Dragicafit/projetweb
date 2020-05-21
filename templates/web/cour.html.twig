@@ -70,6 +70,7 @@
     {% for l in exo %}
     list_ligne.push({ ligne_id: {{ l.id }}, text: "{{ l.text }}", tab: 0});
     {% endfor %}
+    var exo_id = {{ exo_id }};
 </script>
 <script type="text/javascript" src="/js/cour.js"></script>
 {% endblock %}

@@ -67,7 +67,7 @@ function rebuild_option() {
 function send_value() {
     var val = rebuild_option();
     $.ajax({
-        url: '/verif/exo/{{exo_id}}',
+        url: '/verif/exo/' + exo_id,
         type: 'POST',
         dataType: 'json',
         data: {
