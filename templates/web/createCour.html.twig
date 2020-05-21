@@ -1,55 +1,61 @@
 {% extends 'base.html.twig' %}
-{% block body %}
-<div class="container">
-    {{ form_start(formCour) }}
-    <div class="container">
-        <h1>Créons un cours ! </h1>
-        <fieldset>
-            <input type="text" name="titre" id="" class="form-control" placeholder="Titre..." required>
-        </fieldset>
-        <br>
-        <fieldset>
-            <input type="number" name="temps" min="1" max="60" required> minutes.
-        </fieldset>
-        <br>
-        <h4>Créer un exercice :</h4>
-        <fieldset>
-            <textarea class="form-control" name="consigne" cols="33" rows="5" placeholder="Taper votre consigne"
-                required></textarea>
-        </fieldset>
-        <br>
-        <div class="row" id="solution_1">
-            <div class="col-7">
-                <fieldset>
-                    <h5>Entrez une solution :</h5>
-                    <textarea class="form-control " rows="5" cols="33" name="solution1" placeholder="Taper votre code"
-                        required></textarea>
-                </fieldset>
-            </div>
-            <div class="col-5">
-                <fieldset>
-                    <h5>Entrez des lignes inutiles :</h5>
-                    <textarea class="form-control " rows="5" cols="33" name="bad_lines"
-                        placeholder="Taper de mauvaises lignes"></textarea>
-                </fieldset>
-            </div>
-        </div>
-        <button type="button" id="btn_solu" onclick="new_solution()" style="margin-top:5px;"
-            class="btn btn-success">Ajouter une
-            solution</button>
-        <br>
-        <br>
-        {{ form_widget(formCour.save) }}
-        {{ form_widget(formCour.next) }}
-    </div>
-    <input type="number" id="count_sol" name="count_sol" value="1" hidden>
-    {{ form_end(formCour ) }}
-</div>
 
-{% block script %}
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script type="text/javascript" src="/js/createCour.js"></script>
+{% block body %}
+	<div class="container">
+		{{ form_start(formCour) }}
+		<div class="container">
+			<h1>
+				Créons un cours !
+			</h1>
+			<fieldset>
+				<input type="text" name="titre" id="" class="form-control" placeholder="Titre..." required>
+			</fieldset>
+			<br>
+			<fieldset>
+				<input type="number" name="temps" min="1" max="60" required>
+				minutes.
+			</fieldset>
+			<br>
+			<h4>
+				Créer un exercice :
+			</h4>
+			<fieldset>
+				<textarea class="form-control" name="consigne" cols="33" rows="5" placeholder="Taper votre consigne" required></textarea>
+			</fieldset>
+			<br>
+			<div class="row" id="solution_1">
+				<div class="col-7">
+					<fieldset>
+						<h5>
+							Entrez une solution :
+						</h5>
+						<textarea class="form-control " rows="5" cols="33" name="solution1" placeholder="Taper votre code" required></textarea>
+					</fieldset>
+				</div>
+				<div class="col-5">
+					<fieldset>
+						<h5>
+							Entrez des lignes inutiles :
+						</h5>
+						<textarea class="form-control " rows="5" cols="33" name="bad_lines" placeholder="Taper de mauvaises lignes"></textarea>
+					</fieldset>
+				</div>
+			</div>
+			<button type="button" id="btn_solu" onclick="new_solution()" style="margin-top:5px;" class="btn btn-success">
+				Ajouter une solution
+			</button>
+			<br>
+			<br>
+			{{ form_widget(formCour.save) }}
+			{{ form_widget(formCour.next) }}
+		</div>
+		<input type="number" id="count_sol" name="count_sol" value="1" hidden>
+		{{ form_end(formCour ) }}
+	</div>
 {% endblock %}
 
+{% block script %}
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script type="text/javascript" src="/js/createCour.js"></script>
 {% endblock %}

@@ -1,81 +1,111 @@
 {% extends 'base.html.twig' %}
 
-{% block nav_li%}
-
-{% endblock %}
 {% block body %}
-<h1 style="text-align: center; padding: 5% 0% 5% 0%">Bienvenue sur ExoEnLigne !</h1>
-{% if app.user %}
-<table class="table">
-    <thead class="thead-dark">
-        <tr>
-            <th scope="col">Titre</th>
-            <th scope="col">Temps</th>
-            <th scope="col">Créateur</th>
-            {% if app.user.prof %}
-            <th scope="col">Exercices</th>
-            <th scope="col">Eleves</th>
-            <th scope="col">Erreurs</th>
-            {% else %}
-            <th scope="col"></th>
-            {% endif %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for cour in liste_cours %}
-        <tr>
-            <td>{{ cour.title }}</td>
-            <td>{{ cour.temps }} minutes</td>
-            <td>{{ cour.auteur.username }}</td>
-            {% if app.user.prof%}
-            {% if app.user == cour.auteur %}
-
-            <td><a href="/exo_list/{{cour.id}}"><button class="btn btn-light">Afficher</button></a></td>
-            <td><select onchange="get_user_note(this.value, {{cour.id}},0,-1)">
-                    <option value="-1">-- Choix --</option>
-                    {% for eleve in cour.getEleves() %}
-                    <option value="{{ eleve.getId() }}">{{eleve.getUsername()}}</option>
-                    {% endfor %}
-                </select></td>
-            <td id="note_{{cour.id}}">---</td>
-            {% else %}
-            <td></td>
-            <td></td>
-            <td></td>
-            {% endif %}
-            {% else %}
-            {# {% set bool = 0 %}
-            {% for c in app.user.getDone() %}
-            {% if c.id == cour.id %}
-            {% set bool = 1 %}
-            {% endif %}
-            {% endfor %}
-            {% if bool == 1%}
-            <td>Terminé.</td>
-            {% else %} #}
-            <td>
-                <a style="float: right;" href="/cours/{{cour.id}}"><button class="btn btn-primary">Essayer</button></a>
-            </td>
-            {# {% endif %}
- #} {% endif %}
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<div class="container">
-    <p>Pour pouvoir acceder à nos cours en ligne merci de vous inscrire !
-    </p>
-    <p>(Vous êtes enseignant ou formateur ? Pensez à cocher la case "enseignant" !)
-    </p>
-    <a href="{{ path('security_login') }}"><button class="btn btn-success"> Se conencter !</button></a>
-</div>
-
-{% endif %}
+	<h1 style="text-align: center; padding: 5% 0% 5% 0%">
+		Bienvenue sur ExoEnLigne !
+	</h1>
+	{% if app.user %}
+		<table class="table">
+			<thead class="thead-dark">
+				<tr>
+					<th scope="col">
+						Titre
+					</th>
+					<th scope="col">
+						Temps
+					</th>
+					<th scope="col">
+						Créateur
+					</th>
+					{% if app.user.prof %}
+						<th scope="col">
+							Exercices
+						</th>
+						<th scope="col">
+							Eleves
+						</th>
+						<th scope="col">
+							Erreurs
+						</th>
+					{% else %}
+						<th scope="col"></th>
+					{% endif %}
+				</tr>
+			</thead>
+			<tbody>
+				{% for cour in liste_cours %}
+					<tr>
+						<td>
+							{{ cour.title }}
+						</td>
+						<td>
+							{{ cour.temps }}
+							minutes
+						</td>
+						<td>
+							{{ cour.auteur.username }}
+						</td>
+						{% if app.user.prof%}
+							{% if app.user == cour.auteur %}
+								<td>
+									<a href="/exo_list/{{ cour.id }}">
+										<button class="btn btn-light">
+											Afficher
+										</button>
+									</a>
+								</td>
+								<td>
+									<select onchange="get_user_note(this.value, {{ cour.id }},0,-1)">
+										<option value="-1">
+											-- Choix --
+										</option>
+										{% for eleve in cour.getEleves() %}
+											<option value="{{ eleve.getId() }}">
+												{{eleve.getUsername()}}
+											</option>
+										{% endfor %}
+									</select>
+								</td>
+								<td id="note_{{ cour.id }}">
+									---
+								</td>
+							{% else %}
+								<td></td>
+								<td></td>
+								<td></td>
+							{% endif %}
+						{% else %}
+							<td>
+								<a style="float: right;" href="/cours/{{cour.id}}">
+									<button class="btn btn-primary">
+										Essayer
+									</button>
+								</a>
+							</td>
+						{% endif %}
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<div class="container">
+			<p>
+				Pour pouvoir acceder à nos cours en ligne merci de vous inscrire !
+			</p>
+			<p>
+				(Vous êtes enseignant ou formateur ? Pensez à cocher la case "enseignant" !)
+			</p>
+			<a href="{{ path('security_login') }}">
+				<button class="btn btn-success">
+					Se conencter !
+				</button>
+			</a>
+		</div>
+	{% endif %}
+{% endblock %}
 
 {% block script %}
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script type="text/javascript" src="/js/ajax.js"></script>
-{% endblock %}
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script type="text/javascript" src="/js/ajax.js"></script>
 {% endblock %}

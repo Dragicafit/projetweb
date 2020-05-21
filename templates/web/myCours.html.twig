@@ -1,80 +1,97 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-<h1 style="text-align: center; padding: 5% 0% 5% 0%">Bienvenue sur ExoEnLigne !</h1>
-<table class="table" style="text-align: center;">
-    <thead class="thead-dark">
-        <th scope="col">Titre</th>
-        <th scope="col">Auteur</th>
-        <th scope="col">Nombre d'exercice</th>
-        <th scope="col"></th>
-    </thead>
-    <tbody>
-        {% for cour in liste_cours%}
-        <tr onclick="show_exo({{cour.id}})">
-            <td>{{ cour.title }}</td>
-            <td>{{ cour.auteur.getUsername() }}</td>
-            <td>{{ cour.getExercices()|length }}</td>
-            <td><button style="padding: 0; border: none; background: none;"></button>
-                <svg class="bi bi-caret-down-fill" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="dark"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 01.753 1.659l-4.796 5.48a1 1 0 01-1.506 0z" />
-                </svg>
-                </button>
-            </td>
-        </tr>
-        <tr class="table-secondary" name="tr_{{cour.id}}" style="display: none;">
-            <th scope="col">N°</th>
-            <th scope="col">Consigne</th>
-            <th scope="col">Exercice</th>
-            <th scope="col">Nombre d'erreurs</th>
-        </tr>
+	<h1 style="text-align: center; padding: 5% 0% 5% 0%">
+		Bienvenue sur ExoEnLigne !
+	</h1>
+	<table class="table" style="text-align: center;">
+		<thead class="thead-dark">
+			<th scope="col">
+				Titre
+			</th>
+			<th scope="col">
+				Auteur
+			</th>
+			<th scope="col">
+				Nombre d'exercice
+			</th>
+			<th scope="col"></th>
+		</thead>
+		<tbody>
+			{% for cour in liste_cours%}
+				<tr onclick="show_exo({{ cour.id }})">
+					<td>
+						{{ cour.title }}
+					</td>
+					<td>
+						{{ cour.auteur.getUsername() }}
+					</td>
+					<td>
+						{{ cour.getExercices()|length }}
+					</td>
+					<td>
+						<button style="padding: 0; border: none; background: none;"></button>
+						<svg class="bi bi-caret-down-fill" width="1.5em" height="1.5em" viewbox="0 0 16 16" fill="dark" xmlns="http://www.w3.org/2000/svg">
+							<path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 01.753 1.659l-4.796 5.48a1 1 0 01-1.506 0z"/>
+						</svg>
+					</td>
+				</tr>
+				<tr class="table-secondary" name="tr_{{ cour.id }}" style="display: none;">
+					<th scope="col">
+						N°
+					</th>
+					<th scope="col">
+						Consigne
+					</th>
+					<th scope="col">
+						Exercice
+					</th>
+					<th scope="col">
+						Nombre d'erreurs
+					</th>
+				</tr>
+				{% set i = 1 %}
+				{% for exo in cour.getExercices() %}
+					<tr class="table-secondary" name="tr_{{ cour.id }}" style="display: none;">
+						<td>
+							{{ i }}
+							{% set i = i+1 %}
+						</td>
+						<td>
+							{{ exo.consigne }}
+						</td>
+						<td>
+							{% for l in exo.getLigne()[:4] %}
+								{{ l.text }}
+								<br/>
+							{% endfor %}
+						</td>
+						{% set val = "A faire" %}
+						{% for ue in app.user.getEleveExo()%}
+							{% if ue.getExercice() == exo %}
+								{% set val = ue.getNbErreur()%}
+							{% endif %}
+						{% endfor %}
+						{% if val != "A faire" %}
+							<td>
+								{{ val }}
+								(Términé)
+							</td>
+						{% else %}
+							<td>
+								<a style="float: right;" href="/cours/{{cour.id}}">
+									<button class="btn btn-primary">
+										Essayer
+									</button>
+								</a>
+							</td>
+						{% endif %}
+					</tr>
+				{% endfor %}
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}
 
-        {% set i = 1 %}
-        {% for exo in cour.getExercices() %}
-        <tr class="table-secondary" name="tr_{{cour.id}}" style="display: none;">
-            <td>
-                {{ i }}
-                {% set i = i+1 %}
-            </td>
-            <td>
-                {{ exo.consigne }}
-            </td>
-            <td>
-                {% for l in exo.getLigne()[:4] %}
-                {{ l.text }}
-                <br />
-                {% endfor %}
-            </td>
-            {% set val = "A faire" %}
-            {% for ue in app.user.getEleveExo()%}
-            {% if ue.getExercice() == exo %}
-            {% set val = ue.getNbErreur()%}
-            {%endif%}
-            {%endfor%}
-            {% if val != "A faire" %}
-            <td>{{val}} (Términé)</td>
-            {% else %}
-            <td>
-                <a style="float: right;" href="/cours/{{cour.id}}"><button class="btn btn-primary">Essayer</button></a>
-            </td>
-            {% endif %}
-        </tr>
-        {% endfor %}
-
-        {% endfor %}
-    </tbody>
-</table>
 {% block script %}
-<script>
-    function show_exo(cour_id) {
-        let elem = $('[name ="tr_' + cour_id + '"]');
-        if (elem.is(':visible')) {
-            elem.slideUp("slow");
-        } else {
-            elem.slideDown("slow");
-        }
-    }
-</script>
-{%endblock%}
+	<script type="text/javascript" src="/js/myCours.js"></script>
 {% endblock %}

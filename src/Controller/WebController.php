@@ -297,8 +297,8 @@ class WebController extends AbstractController
         }
         $type = $request->request->get('type');
         $repo = $manager->getRepository(User::class);
-        $cour_id = $request->request->get('cour');
-        $user_id = $request->request->get('user');
+        $cour_id = $request->request->get('cour_id');
+        $user_id = $request->request->get('user_id');
         $user = $repo->find($user_id);
         if ($user === null) {
             throw $this->createNotFoundException('The request does not exist');
@@ -317,7 +317,7 @@ class WebController extends AbstractController
             }
             return new JsonResponse($note);
         }
-        $exo_id = $request->request->get('exo');
+        $exo_id = $request->request->get('exo_id');
         foreach ($user_exo as $eleve_exo) {
             if ($eleve_exo->getExercice()->getId() == $exo_id) {
                 /* A voir ce qu'on affiche */
