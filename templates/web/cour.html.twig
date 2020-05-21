@@ -1,80 +1,92 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" href="/css/cour.css">
+<link rel="stylesheet" href="/css/cour.css">
 {% endblock %}
 
 
 {% block body %}
-	<div class="back_grey">
-		<h1 style="text-align: center; padding-top: 4%;">
-			Bienvenue sur le cour :
-			{{ cour.title }}
-		</h1>
-		<h4 style="text-align: center;">
-			Auteur:
-			{{ cour.auteur.username }}
-		</h4>
-	</div>
-	<div class="container">
-		<form action="/cours/{{cour_id}}/exo/{{cour_exo_id +1}}">
-			<div class="row" style="margin: 10px;">
-				<div class="col-6">
-					<div>
-						<h3>
-							Exercice
-							{{ cour_exo_id+1 }}
-							:
-						</h3>
-						<h4>
-							{{ cons }}
-						</h4>
-					</div>
-				</div>
-				<div class="col-6">
-					<div>
-						<h3 id="att_hidden">
-							Remplir ici :
-						</h3>
-					</div>
+<div class="back_grey">
+	<h1 style="text-align: center; padding-top: 4%;">
+		Bienvenue sur le cour :
+		{{ cour.title }}
+	</h1>
+	<h4 style="text-align: center;">
+		Auteur:
+		{{ cour.auteur.username }}
+	</h4>
+</div>
+<div class="container">
+	<form action="/cours/{{cour_id}}/exo/{{cour_exo_id +1}}">
+		<div class="row" style="margin: 10px;">
+			<div class="col-6">
+				<div>
+					<h3>
+						Exercice
+						{{ cour_exo_id+1 }}
+						:
+					</h3>
+					<h4>
+						{{ cons }}
+					</h4>
 				</div>
 			</div>
-			<div class="row" style="margin: 10px;">
-				<div class="col-6" id="col-exo">
-					<div style="border: solid 1px gray; padding: 20px;" id="foo"></div>
-				</div>
-				<div class="col-6" id="res_hidden">
-					<div style="border: solid 1px gray; padding: 20px;" id="foo">
-						<ul id="userFacets" class="facet-list"></ul>
-					</div>
+			<div class="col-6">
+				<div>
+					<h3 id="att_hidden">
+						Remplir ici :
+					</h3>
 				</div>
 			</div>
-			<p style="text-align: center;">
-				<button type="button" id="btn_check" class="btn btn-primary" onclick="send_value()" style="text-align: center;">
-					Verifier
-				</button>
-				<button type="button" class="btn btn-primary" onclick="send_abandon()" id="btn_surrend" style="text-align: center;">
-					Abandonner
-				</button>
-				<button type="submit" class="btn btn-primary" id="btn_sub" hidden>
-					Suivant
-				</button>
-			</p>
-			<input type="text" name="cour_id" value="{{ cour_id }}" hidden>
+		</div>
+		<div class="row" style="margin: 10px;">
+			<div class="col-6" id="col-exo">
+				<div style="border: solid 1px gray; padding: 20px;" id="foo"></div>
+			</div>
+			<div class="col-6" id="res_hidden">
+				<div style="border: solid 1px gray; padding: 20px;" id="foo">
+					<ul id="userFacets" class="facet-list"></ul>
+				</div>
+			</div>
+		</div>
+		<div class="row" id="div_solution" hidden>
+			<div class="col-6">
+				<h3>
+					Un exemple de solution :
+				</h3>
+				<div style="border: solid 1px gray; padding: 20px;" id="line_solution">
+					<ul id="solution_ul"></ul>
+				</div>
+			</div>
+		</div>
+		<p style="text-align: center;">
+			<button type="button" id="btn_check" class="btn btn-primary" onclick="send_value()"
+				style="text-align: center;">
+				Verifier
+			</button>
+			<button type="button" class="btn btn-primary" onclick="send_abandon()" id="btn_surrend"
+				style="text-align: center;">
+				Abandonner
+			</button>
+			<button type="submit" class="btn btn-primary" id="btn_sub" hidden>
+				Suivant
+			</button>
+		</p>
+		<input type="text" name="cour_id" value="{{ cour_id }}" hidden>
 
-			<input type="text" name="cour_exo_id" value="{{ cour_exo_id }}" hidden>
+		<input type="text" name="cour_exo_id" value="{{ cour_exo_id }}" hidden>
 
 
-		</form>
-	</div>
+	</form>
+</div>
 {% endblock %}
 {% block script %}
-	<script type="text/javascript">
-		var list_ligne = [];
-        {% for l in exo %}
-            list_ligne.push({ligne_id: {{ l.id }}, text: "{{ l.text }}", tab: 0});
-        {% endfor %}
-        var exo_id = {{ exo_id }};
-	</script>
-	<script type="text/javascript" src="/js/cour.js"></script>
+<script type="text/javascript">
+	var list_ligne = [];
+	{% for l in exo %}
+	list_ligne.push({ ligne_id: {{ l.id }}, text: "{{ l.text }}", tab: 0});
+	{% endfor %}
+	var exo_id = {{ exo_id }};
+</script>
+<script type="text/javascript" src="/js/cour.js"></script>
 {% endblock %}

@@ -5,7 +5,7 @@ function makeUL(val) {
     var list = document.createElement('ul');
     list.setAttribute('id', 'allFacets');
     list.setAttribute('class', 'facet-list');
-    for (var i = 0; i < list_ligne.length; i++) {
+    for (var i = 0; i < val.length; i++) {
         // Create the list item:
         var item = document.createElement('li');
         item.setAttribute('class', 'facet');
@@ -25,7 +25,7 @@ function makeUL(val) {
         btnMoins.appendChild(document.createTextNode("-"));
 
         // Set its contents:
-        item.appendChild(document.createTextNode(list_ligne[i].text));
+        item.appendChild(document.createTextNode(val[i].text));
         // Add au li:
         item.appendChild(btnPlus);
         item.appendChild(btnMoins);
@@ -34,7 +34,7 @@ function makeUL(val) {
     form.appendChild(list);
     return form;
 }
-document.getElementById('foo').appendChild(makeUL('exo'));
+document.getElementById('foo').appendChild(makeUL(list_ligne));
 function add_indent(i, plus) {
     if (plus) {
         if (list_ligne[i].tab < 10) {
@@ -77,7 +77,6 @@ function send_value() {
 
         success: function (data, status) {
             document.getElementById('btn_sub').hidden = !data;
-
             document.getElementById('btn_surrend').hidden = data;
             document.getElementById('btn_check').hidden = data;
             if (!data) alert('Encore un effort, c\'est presque bon !');
@@ -99,6 +98,9 @@ function send_abandon() {
             document.getElementById('btn_sub').hidden = false;
             document.getElementById('btn_surrend').hidden = true;
             document.getElementById('btn_check').hidden = true;
+            document.getElementById('div_solution').hidden = false;
+            document.getElementById('line_solution').appendChild(makeUL(data));
+
         },
         error: function (xhr, textStatus, errorThrown) {
             alert('Ajax request failed.');

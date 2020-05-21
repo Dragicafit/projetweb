@@ -131,7 +131,17 @@ class WebController extends AbstractController
         $exo_user = ExoUser::initExoUser($user, $exercice, false, $manager);
         $exo_user ->setAbandon(true);
         $manager->flush();
-        return new JsonResponse();
+        $solutions = $exercice->getSolution();
+        if (sizeof($solutions) > 0) {
+            $solution = $solutions[0];
+        }
+        $tab = $solution->getTab();
+        $lignes = [];
+        foreach ($tab as $tab_lignes) {
+            $ligne = $tab_lignes->getLigne();
+            $lignes[]=["ligne_id" => $ligne->getId(), "text" => $ligne->getText()];
+        }
+        return new JsonResponse($lignes);
     }
 
     /**
