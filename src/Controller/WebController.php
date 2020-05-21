@@ -98,20 +98,15 @@ class WebController extends AbstractController
     }
 
 
-    public function exo_precedent($cour_exo_id, $exos, UserInterface $user)
+    public function exo_precedent($cour_exo_id, $exos, UserInterface $user, EntityManagerInterface $manager)
     {
         $exo_p = $cour_exo_id -1;
         if ($exo_p < 0) {
             throw $this->createNotFoundException('Introuvable');
         }
         $exo_pre = $exos[$exo_p];
-        $exo_users = $exo_pre -> getExoUsers();
-        foreach ($exo_users as $exo_user) {
-            if ($exo_user->getEleve() == $user && ($exo_user->getWin() || $exo_user->getAbandon())) {
-                return true;
-            }
-        }
-        return false;
+        $exoUser = $manager->getRepository(ExoUser::class)->findOneBy(['eleve' => $user,'exercice' => $exo_pre]);
+        return $exoUser != null && ($exoUser->getWin() || $exoUser->getAbandon());
     }
 
     /**
@@ -165,7 +160,7 @@ class WebController extends AbstractController
         if ($cour_exo_id==0) {
             $user->addCoursEleve($cour);
         } else {
-            if (!$this->exo_precedent($cour_exo_id, $exos, $user)) {
+            if (!$this->exo_precedent($cour_exo_id, $exos, $user, $manager)) {
                 throw $this->createNotFoundException('Introuvable');
             }
         }
@@ -175,8 +170,13 @@ class WebController extends AbstractController
             $manager->flush();
             return $this->render('web/finexo.html.twig');
         }
-
         $exo =$exos[$cour_exo_id];
+
+        $exoUser = $manager->getRepository(ExoUser::class)->findOneBy(['eleve' => $user,'exercice' => $exo]);
+        if ($exoUser != null && ($exoUser->getWin() || $exoUser->getAbandon())) {
+            return $this->redirectToRoute('cour_exo', ['cour_id'=>$cour_id, 'cour_exo_id'=>$cour_exo_id+1]);
+        }
+
         $lignes = $exo->getLigne();
         $solutions = $exo->getSolution();
         $lignes_solutions = [];
