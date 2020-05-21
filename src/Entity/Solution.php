@@ -33,20 +33,11 @@ class Solution
      */
     private $exercice;
 
-    public static function initSolution(array $values, array $count, array $convert, Exercice $exo, EntityManagerInterface $manager)
+    public static function initSolution(array $lignes, Exercice $exo, EntityManagerInterface $manager)
     {
         $solution = new static();
-
-        $lignes = [];
-
-        foreach ($values as $key => $value) {
-            $ligne = Ligne::initLigne($value, $manager);
-            $ligne->addExercice($exo);
-            $lignes[$key] = $ligne;
-            $manager->flush();
-        }
-        foreach ($values as $key => $value) {
-            $tab = Tab::initTab($lignes[$key], $convert[$count[$key]], $manager);
+        foreach ($lignes as $key => $ligne) {
+            $tab = Tab::initTab($ligne["ligne"], $ligne["tab"], $manager);
             $solution->addTab($tab);
         }
         $manager->persist($solution);

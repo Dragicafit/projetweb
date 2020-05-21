@@ -41,7 +41,8 @@ class WebController extends AbstractController
         $consigne = $request->get('consigne');
         $cour->addExercice($exercice);
         $exercice->initExercice($value, $consigne, $manager);
-            
+        $bad_l = $request->get('bad_lines');
+        $exercice->parseLigne($bad_l, $manager);
         for ($solu = 2; $solu<=$nb_solution; $solu++) {
             $exercice->parseSolution($request->get('solution'.$solu), $manager);
         }

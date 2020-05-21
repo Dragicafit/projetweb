@@ -151,8 +151,7 @@ class Exercice
 
         return $this;
     }
-
-    public function parseSolution(string $solutionRaw, EntityManagerInterface $manager)
+    public function parseLigne(string $solutionRaw, EntityManagerInterface $manager)
     {
         $values = str_replace("\r", "", $solutionRaw);
         $values = str_replace("\t", "    ", $values);
@@ -169,8 +168,22 @@ class Exercice
         $count2=array_unique($count, SORT_NUMERIC);
         sort($count2);
         $convert = array_flip($count2);
+        
+        $lignes = [];
+        foreach ($values as $key => $str) {
+            $ligne = Ligne::initLigne($str, $manager);
+            $ligne->addExercice($this);
+            $lignes[$key]=["tab" => $convert[$count[$key]] , "ligne" => $ligne];
+            $manager->flush();
+        }
 
-        $solution = Solution::initSolution($values, $count, $convert, $this, $manager);
+        return $lignes;
+    }
+
+    public function parseSolution(string $solutionRaw, EntityManagerInterface $manager)
+    {
+        $lignes = $this->parseLigne($solutionRaw, $manager);
+        $solution = Solution::initSolution($lignes, $this, $manager);
         $this->addSolution($solution);
 
         return $this;
