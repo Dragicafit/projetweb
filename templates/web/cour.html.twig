@@ -1,75 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
+<link rel="stylesheet" href="/css/cour.css">
 {% endblock %}
 
 
 {% block body %}
-<style>
-    .facet-container {
-        width: 330px;
-    }
-
-    .right {
-        float: right;
-    }
-
-    .left {
-        float: left;
-    }
-
-    p {
-        clear: both;
-        padding-top: 1em;
-    }
-
-    .facet-list {
-        list-style-type: none;
-        margin: 0 10px 0 0;
-        padding: 5px;
-        background: #eee;
-        min-height: 1.5em;
-        font-size: 0.85em;
-    }
-
-    .facet-list li {
-        margin: 5px;
-        padding: 5px;
-        font-size: 1.2em;
-    }
-
-    .facet-list li.placeholder {
-        height: 1.2em;
-    }
-
-    .facet {
-        border: 1px solid #bbb;
-        background-color: #fafafa;
-        cursor: move;
-    }
-
-    .facet.ui-sortable-helper {
-        opacity: 0.5;
-    }
-
-    .placeholder {
-        border: 1px solid orange;
-        background-color: #fffffd;
-    }
-
-    .div {
-        width: 350px;
-        height: 70px;
-        padding: 10px;
-        background-color: white;
-        border: 2px black solid;
-    }
-
-    .back_grey {
-        background-color: lightgrey;
-        padding-bottom: 2.5%;
-    }
-</style>
 <div class="back_grey">
     <h1 style="text-align: center; padding-top: 4%;">
         Bienvenue sur le cour :
@@ -127,10 +63,8 @@
     </form>
 </div>
 {# {% endfor %} #}
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script type="text/javascript" src="/js/ajax.js"></script>
-
+{% endblock %}
+{% block script %}
 <script type="text/javascript">
     var list_ligne = [];
     {% for l in exo %}

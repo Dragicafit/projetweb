@@ -10,20 +10,20 @@
     </thead>
     <tbody>
         {% for cour in liste_cours%}
-        <tr>
+        <tr onclick="show_exo({{cour.id}})">
             <td>{{ cour.title }}</td>
             <td>{{ cour.auteur.getUsername() }}</td>
             <td>{{ cour.getExercices()|length }}</td>
-            <td><button style="padding: 0; border: none; background: none;" onclick="show_exo({{cour.id}})">
-                    <svg class="bi bi-caret-down-fill" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="dark"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 01.753 1.659l-4.796 5.48a1 1 0 01-1.506 0z" />
-                    </svg>
+            <td><button style="padding: 0; border: none; background: none;"></button>
+                <svg class="bi bi-caret-down-fill" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="dark"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 01.753 1.659l-4.796 5.48a1 1 0 01-1.506 0z" />
+                </svg>
                 </button>
             </td>
         </tr>
-        <tr class="table-secondary" name="head_{{cour.id}}" style="display: none;">
+        <tr class="table-secondary" name="tr_{{cour.id}}" style="display: none;">
             <th scope="col">N°</th>
             <th scope="col">Consigne</th>
             <th scope="col">Exercice</th>
@@ -66,19 +66,13 @@
     </tbody>
 </table>
 {% block script %}
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script>
     function show_exo(cour_id) {
-        console.log($('[name ="tr_' + cour_id + '"]'));
         let elem = $('[name ="tr_' + cour_id + '"]');
-        let title = $('[name ="head_' + cour_id + '"]');
         if (elem.is(':visible')) {
-            elem.hide(100);
-            title.hide(100);
+            elem.slideUp("slow");
         } else {
-            elem.show(100);
-            title.show(100);
-
+            elem.slideDown("slow");
         }
     }
 </script>

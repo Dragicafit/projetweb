@@ -1,0 +1,63 @@
+    .facet-container {
+        width: 330px;
+    }
+
+    .right {
+        float: right;
+    }
+
+    .left {
+        float: left;
+    }
+
+    p {
+        clear: both;
+        padding-top: 1em;
+    }
+
+    .facet-list {
+        list-style-type: none;
+        margin: 0 10px 0 0;
+        padding: 5px;
+        background: #eee;
+        min-height: 1.5em;
+        font-size: 0.85em;
+    }
+
+    .facet-list li {
+        margin: 5px;
+        padding: 5px;
+        font-size: 1.2em;
+    }
+
+    .facet-list li.placeholder {
+        height: 1.2em;
+    }
+
+    .facet {
+        border: 1px solid #bbb;
+        background-color: #fafafa;
+        cursor: move;
+    }
+
+    .facet.ui-sortable-helper {
+        opacity: 0.5;
+    }
+
+    .placeholder {
+        border: 1px solid orange;
+        background-color: #fffffd;
+    }
+
+    .div {
+        width: 350px;
+        height: 70px;
+        padding: 10px;
+        background-color: white;
+        border: 2px black solid;
+    }
+
+    .back_grey {
+        background-color: lightgrey;
+        padding-bottom: 2.5%;
+    }
