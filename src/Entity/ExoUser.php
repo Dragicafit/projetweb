@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\User;
+use App\Entity\Exercice;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -32,6 +34,33 @@ class ExoUser
      * @ORM\Column(type="integer")
      */
     private $nbErreur;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $win;
+
+    public static function initExoUser(User $user, Exercice $exercice, bool $win, EntityManagerInterface $manager)
+    {
+        $exoUser = $manager->getRepository(ExoUser::class)->findOneBy(['eleve' => $user,'exercice' => $exercice]);
+        
+        if ($exoUser == null) {
+            $exoUser = new static();
+            $exoUser->setEleve($user);
+            $exoUser->setExercice($exercice);
+            $manager->persist($exoUser);
+        }
+
+        if (!$win) {
+            $exoUser->addNbErreur();
+        }
+        $exoUser->setWin($win);
+        return $exoUser;
+    }
+
+    private function __construct()
+    {
+    }
 
     public function getId(): ?int
     {
@@ -70,6 +99,24 @@ class ExoUser
     public function setNbErreur(int $nbErreur): self
     {
         $this->nbErreur = $nbErreur;
+
+        return $this;
+    }
+    public function addNbErreur(): self
+    {
+        $this->nbErreur += 1;
+
+        return $this;
+    }
+
+    public function getWin(): ?bool
+    {
+        return $this->win;
+    }
+
+    public function setWin(bool $win): self
+    {
+        $this->win = $win;
 
         return $this;
     }

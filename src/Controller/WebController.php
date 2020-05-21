@@ -164,8 +164,6 @@ class WebController extends AbstractController
 
         $rep=$request->request->get('rep', []);
 
-        $erreur = 0;
-
         foreach ($solutions as $solution) {
             $tab = $solution->getTab();
             if (sizeof($tab) == sizeof($rep)) {
@@ -174,15 +172,13 @@ class WebController extends AbstractController
                         continue 2;
                     }
                 }
-                $exo_user = new ExoUser();
-                $exo_user->setEleve($user);
-                $exo_user->setExercice($exercice);
-                $exo_user->setNbErreur($erreur);
-                $manager->persist($exo_user);
+                $exo_user = ExoUser::initExoUser($user, $exercice, 1, $manager);
                 $manager->flush();
                 return new JsonResponse(true);
             }
         }
+        $exo_user = ExoUser::initExoUser($user, $exercice, 0, $manager);
+        $manager->flush();
         return new JsonResponse(false);
     }
 
