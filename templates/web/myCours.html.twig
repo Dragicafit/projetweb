@@ -14,6 +14,9 @@
 			<th scope="col">
 				Nombre d'exercice
 			</th>
+			<th scope="col">
+				Taux de réussite
+			</th>
 			<th scope="col"></th>
 		</thead>
 		<tbody>
@@ -28,6 +31,7 @@
 					<td>
 						{{ cour.getExercices()|length }}
 					</td>
+					<td></td>
 					<td>
 						<button style="padding: 0; border: none; background: none;"></button>
 						<svg class="bi bi-caret-down-fill" width="1.5em" height="1.5em" viewbox="0 0 16 16" fill="dark" xmlns="http://www.w3.org/2000/svg">
@@ -48,6 +52,7 @@
 					<th scope="col">
 						Nombre d'erreurs
 					</th>
+					<th></th>
 				</tr>
 				{% set i = 1 %}
 				{% for exo in cour.getExercices() %}
@@ -68,15 +73,26 @@
 						{% set val = "A faire" %}
 						{% for ue in app.user.getEleveExo()%}
 							{% if ue.getExercice() == exo %}
-								{% set val = ue.getNbErreur()%}
+								{% set val = ue%}
 							{% endif %}
 						{% endfor %}
 						{% if val != "A faire" %}
 							<td>
-								{{ val }}
-								(Términé)
+								{{ val.getNbErreur() }}
+							</td>
+							<td>
+								{% if val.getWin() or val.getAbandon() %}
+									(Términé)
+								{% else %}
+									<a style="float: right;" href="/cours/{{cour.id}}">
+										<button class="btn btn-primary">
+											Essayer
+										</button>
+									</a>
+								{% endif %}
 							</td>
 						{% else %}
+							<td></td>
 							<td>
 								<a style="float: right;" href="/cours/{{cour.id}}">
 									<button class="btn btn-primary">
@@ -91,7 +107,6 @@
 		</tbody>
 	</table>
 {% endblock %}
-
 {% block script %}
 	<script type="text/javascript" src="/js/myCours.js"></script>
 {% endblock %}

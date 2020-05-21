@@ -54,6 +54,7 @@ class ExoUser
             $exoUser = new static();
             $exoUser->setEleve($user);
             $exoUser->setExercice($exercice);
+            $exoUser->setAbandon(false);
             $manager->persist($exoUser);
         }
 
